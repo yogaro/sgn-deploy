@@ -45,7 +45,8 @@ Database baru berisi skema saja. Perintah interaktif dijalankan di image
 yang sama:
 
 ```bash
-# Akun admin IAM (non-karyawan) — tanya email & password
+# Akun superadmin IAM pertama (non-karyawan, role SUPERADMIN) — tanya Login ID & password.
+# Membuka Portal dan LMS; Directory FE punya akun sendiri (createuser di bawah).
 docker compose run --rm iam createadmin
 
 # Client sync HR → IAM; salin id & secret ke HR_IAM_CLIENT_ID/SECRET di .env
