@@ -16,7 +16,10 @@ x-hr-env: &hr-env
   IAM_CLIENT_SECRET: ${HR_IAM_CLIENT_SECRET:-}
   IAM_SYNC_INTERVAL: ${HR_IAM_SYNC_INTERVAL:-1h}
   ALLOWED_ORIGIN: http://localhost:${PORTAL_PORT:-3000}
-  STORAGE_DIR: /data/storage
+  S3_ENDPOINT: http://s3:9000
+  S3_BUCKET: hr-files
+  S3_ACCESS_KEY: ${S3_ACCESS_KEY:?set S3_ACCESS_KEY in .env}
+  S3_SECRET_KEY: ${S3_SECRET_KEY:?set S3_SECRET_KEY in .env}
   METRICS_ADDR: ':9091'
 
 x-lms-env: &lms-env
@@ -99,18 +102,17 @@ services:
     image: sgn-hr-service
     build: { context: ., dockerfile: sgn-hr-service/Dockerfile }
     environment: *hr-env
-    volumes: ['hr-storage:/data/storage']
     ports: ['${HR_PORT:-8082}:8082']
     restart: unless-stopped
     depends_on:
       hr-migrate: { condition: service_completed_successfully }
       iam: { condition: service_healthy }
+      s3: { condition: service_started }
 
   hr-worker:
     <<: *hr-image
     command: ['worker']
     environment: *hr-env
-    volumes: ['hr-storage:/data/storage']
     healthcheck: { disable: true }
     restart: unless-stopped
     depends_on:
@@ -274,7 +276,6 @@ secrets:
 
 volumes:
   pgdata:
-  hr-storage:
   s3-data:
   prometheus-data:
   loki-data:

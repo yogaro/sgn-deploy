@@ -8,7 +8,7 @@
 | `iam-migrate`  | `sgn-iam-service`       | —                   | migrasi IAM, sekali jalan                    |
 | `iam`          | `sgn-iam-service`       | `8081`              | IAM API                                      |
 | `hr-migrate`   | `sgn-hr-service`        | —                   | migrasi HR, sekali jalan                     |
-| `hr`           | `sgn-hr-service`        | `8082`              | HR API (lampiran di volume `hr-storage`)     |
+| `hr`           | `sgn-hr-service`        | `8082`              | HR API (lampiran di bucket S3 `hr-files`)    |
 | `hr-worker`    | `sgn-hr-service`        | —                   | sync IAM berkala + job harian absensi        |
 | `lms-migrate`  | `sgn-lms-service`       | —                   | migrasi LMS, sekali jalan                    |
 | `lms`          | `sgn-lms-service`       | `8083`              | LMS API                                      |

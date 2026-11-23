@@ -32,7 +32,7 @@ docker compose up -d portal
   `hr-migrate`, dan `hr-worker` memakai image yang sama. Dengan begitu mereka
   ikut diganti, dan migrasi baru (kalau ada) langsung dijalankan.
 - **Data aman.** Rebuild tidak menyentuh database atau lampiran HR, karena
-  keduanya ada di volume `pgdata` dan `hr-storage`. Data hanya hilang kalau
+  keduanya ada di volume `pgdata` dan `s3-data`. Data hanya hilang kalau
   menjalankan `docker compose down -v`.
 - **Directory service tidak punya job migrate.** Migrasinya hanya jalan
   otomatis saat volume `pgdata` baru dibuat. Untuk volume yang sudah ada,
