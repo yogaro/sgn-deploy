@@ -1,0 +1,54 @@
+# Sistem operasi dan editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Rahasia: nilai asli hanya di .env, contohnya ada di .env.example
+.env
+.env.*
+!.env.example
+docker/secrets/*
+!docker/secrets/.gitignore
+*.pem
+*.key
+signing-key*
+
+# Dependensi dan hasil build
+node_modules/
+dist/
+build/
+coverage/
+test-results/
+playwright-report/
+*.log
+tmp/
+
+# Data karyawan asli dan turunannya (FORMASI), jangan masuk repo
+/seed/data/private/
+/seed/backup/
+/seed/sql/10_directory.sql
+/seed/sql/20_iam_roles.sql
+/seed/sql/30_lms.sql
+/docs/seed/
+
+# Media demo hasil generate (275 MB). Buat ulang: node seed/gen/assets.mjs
+/seed/assets/
+
+# Repo aplikasi (masing-masing punya git sendiri) dan dokumentasi di luar repo ini
+/sgn-*/
+/docs/
+
+# Berkas pribadi dan catatan lokal di root
+/TODO.md
+/Evaluasi Pelatihan/
+/obsidian-vault/
+/screenshots/
+/*.mp4
+/WhatsApp*
+/SECURITY-NOTES.md
+
+# Alat bantu AI (bukan bagian aplikasi)
+/.claude/
+/.agents/
+/skills-lock.json

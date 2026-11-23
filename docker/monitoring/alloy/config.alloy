@@ -1,0 +1,37 @@
+// Ships the stdout of every container of the sgn compose project to Loki, labelled by service.
+discovery.docker "sgn" {
+  host = "unix:///var/run/docker.sock"
+  filter {
+    name   = "label"
+    values = ["com.docker.compose.project=sgn"]
+  }
+}
+
+discovery.relabel "sgn" {
+  targets = discovery.docker.sgn.targets
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "service"
+  }
+}
+
+loki.source.docker "sgn" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.sgn.output
+  forward_to = [loki.process.sgn.receiver]
+}
+
+loki.process "sgn" {
+  forward_to = [loki.write.default.receiver]
+
+  // Container healthchecks (wget every 10 s against nginx) only add noise.
+  stage.drop {
+    expression = `"GET / HTTP/1\.1" \d+ \d+ "-" "Wget"`
+  }
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

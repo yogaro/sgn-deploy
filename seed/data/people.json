@@ -1,0 +1,2758 @@
+[
+ {
+  "employee_number": "PTSGN-1001",
+  "email": "nanda.yuliana@sgn.example",
+  "name": "Nanda Yuliana",
+  "nik": "3508032111800001",
+  "birth": "1980-11-21",
+  "position": "PTSGN-POS-DIRUT",
+  "unit": "PTSGN-DIR-UTAMA",
+  "head": true,
+  "parent": null,
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S2",
+   "Manajemen"
+  ],
+  "start": "2017-01-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1002",
+  "email": "maharani.santoso@sgn.example",
+  "name": "Maharani Santoso",
+  "nik": "3101156509710002",
+  "birth": "1971-09-25",
+  "position": "PTSGN-POS-KADIV-RENSTRA",
+  "unit": "PTSGN-DIV-RENSTRA",
+  "head": true,
+  "parent": null,
+  "fn": "Perencanaan & Strategi",
+  "edu": [
+   "S2",
+   "Manajemen Strategis"
+  ],
+  "start": "2019-10-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1003",
+  "email": "tri.siregar@sgn.example",
+  "name": "Tri Siregar",
+  "nik": "3272181207910003",
+  "birth": "1991-07-12",
+  "position": "PTSGN-POS-STAF-RENSTRA-01",
+  "unit": "PTSGN-DIV-RENSTRA",
+  "head": false,
+  "parent": null,
+  "fn": "Perencanaan & Strategi",
+  "edu": [
+   "S1",
+   "Teknik Industri"
+  ],
+  "start": "2017-02-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1004",
+  "email": "utami.santoso@sgn.example",
+  "name": "Utami Santoso",
+  "nik": "3204125201920004",
+  "birth": "1992-01-12",
+  "position": "PTSGN-POS-STAF-RENSTRA-02",
+  "unit": "PTSGN-DIV-RENSTRA",
+  "head": false,
+  "parent": null,
+  "fn": "Perencanaan & Strategi",
+  "edu": [
+   "S1",
+   "Ekonomi Pembangunan"
+  ],
+  "start": "2025-08-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1005",
+  "email": "reza.rahardjo@sgn.example",
+  "name": "Reza Rahardjo",
+  "nik": "3509221312710005",
+  "birth": "1971-12-13",
+  "position": "PTSGN-POS-KADIV-SEKPER",
+  "unit": "PTSGN-DIV-SEKPER",
+  "head": true,
+  "parent": null,
+  "fn": "Sekretariat & Hukum",
+  "edu": [
+   "S1",
+   "Ilmu Komunikasi"
+  ],
+  "start": "2024-04-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1006",
+  "email": "surya.aprilia@sgn.example",
+  "name": "Surya Aprilia",
+  "nik": "3502042804960006",
+  "birth": "1996-04-28",
+  "position": "PTSGN-POS-STAF-SEKPER-01",
+  "unit": "PTSGN-DIV-SEKPER",
+  "head": false,
+  "parent": null,
+  "fn": "Sekretariat & Hukum",
+  "edu": [
+   "D3",
+   "Kesekretariatan"
+  ],
+  "start": "2024-05-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1007",
+  "email": "krisna.hasibuan@sgn.example",
+  "name": "Krisna Hasibuan",
+  "nik": "3108161309690007",
+  "birth": "1969-09-13",
+  "position": "PTSGN-POS-DIRKEUSDM",
+  "unit": "PTSGN-DIR-KEUSDM",
+  "head": true,
+  "parent": null,
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S2",
+   "Akuntansi"
+  ],
+  "start": "2015-02-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1008",
+  "email": "denny.susilo@sgn.example",
+  "name": "Denny Susilo",
+  "nik": "3173191902700008",
+  "birth": "1970-02-19",
+  "position": "PTSGN-POS-KADIV-KEUANGAN",
+  "unit": "PTSGN-DIV-KEUANGAN",
+  "head": true,
+  "parent": null,
+  "fn": "Keuangan & Akuntansi",
+  "edu": [
+   "S2",
+   "Akuntansi"
+  ],
+  "start": "2025-10-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1009",
+  "email": "bayu.kurniawan@sgn.example",
+  "name": "Bayu Kurniawan",
+  "nik": "3106122307910009",
+  "birth": "1991-07-23",
+  "position": "PTSGN-POS-STAF-KEUANGAN-01",
+  "unit": "PTSGN-DIV-KEUANGAN",
+  "head": false,
+  "parent": null,
+  "fn": "Keuangan & Akuntansi",
+  "edu": [
+   "S1",
+   "Akuntansi"
+  ],
+  "start": "2021-06-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1010",
+  "email": "prasetya.wicaksono@sgn.example",
+  "name": "Prasetya Wicaksono",
+  "nik": "3510032305850010",
+  "birth": "1985-05-23",
+  "position": "PTSGN-POS-STAF-KEUANGAN-02",
+  "unit": "PTSGN-DIV-KEUANGAN",
+  "head": false,
+  "parent": null,
+  "fn": "Keuangan & Akuntansi",
+  "edu": [
+   "S1",
+   "Manajemen Keuangan"
+  ],
+  "start": "2017-08-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1011",
+  "email": "oki.puspitasari@sgn.example",
+  "name": "Oki Puspitasari",
+  "nik": "3109140206700011",
+  "birth": "1970-06-02",
+  "position": "PTSGN-POS-KADIV-SDM",
+  "unit": "PTSGN-DIV-SDM",
+  "head": true,
+  "parent": null,
+  "fn": "Sumber Daya Manusia",
+  "edu": [
+   "S2",
+   "Manajemen Sumber Daya Manusia"
+  ],
+  "start": "2017-12-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1012",
+  "email": "heru.ramadhan@sgn.example",
+  "name": "Heru Ramadhan",
+  "nik": "3271100508990012",
+  "birth": "1999-08-05",
+  "position": "PTSGN-POS-STAF-SDM-01",
+  "unit": "PTSGN-DIV-SDM",
+  "head": false,
+  "parent": null,
+  "fn": "Sumber Daya Manusia",
+  "edu": [
+   "S1",
+   "Psikologi"
+  ],
+  "start": "2018-06-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1013",
+  "email": "joko.mulyadi@sgn.example",
+  "name": "Joko Mulyadi",
+  "nik": "3207172107920013",
+  "birth": "1992-07-21",
+  "position": "PTSGN-POS-STAF-SDM-02",
+  "unit": "PTSGN-DIV-SDM",
+  "head": false,
+  "parent": null,
+  "fn": "Sumber Daya Manusia",
+  "edu": [
+   "S1",
+   "Manajemen Sumber Daya Manusia"
+  ],
+  "start": "2024-09-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1014",
+  "email": "yoga.nugroho@sgn.example",
+  "name": "Yoga Nugroho",
+  "nik": "3206212706740014",
+  "birth": "1974-06-27",
+  "position": "PTSGN-POS-DIRTEKOPS",
+  "unit": "PTSGN-DIR-TEKOPS",
+  "head": true,
+  "parent": null,
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S2",
+   "Teknik Kimia"
+  ],
+  "start": "2025-05-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1015",
+  "email": "bintang.anggara@sgn.example",
+  "name": "Bintang Anggara",
+  "nik": "3572210410760015",
+  "birth": "1976-10-04",
+  "position": "PTSGN-POS-KADIV-TI",
+  "unit": "PTSGN-DIV-TI",
+  "head": true,
+  "parent": null,
+  "fn": "Teknologi Informasi",
+  "edu": [
+   "S2",
+   "Teknik Informatika"
+  ],
+  "start": "2025-05-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1016",
+  "email": "oki.wibowo@sgn.example",
+  "name": "Oki Wibowo",
+  "nik": "3171151110730016",
+  "birth": "1973-10-11",
+  "position": "PTSGN-POS-KASUBDIV-INFRATI",
+  "unit": "PTSGN-SUBDIV-INFRATI",
+  "head": true,
+  "parent": null,
+  "fn": "Teknologi Informasi",
+  "edu": [
+   "S1",
+   "Teknik Informatika"
+  ],
+  "start": "2024-05-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1017",
+  "email": "dian.setiawan@sgn.example",
+  "name": "Dian Setiawan",
+  "nik": "3109065312880017",
+  "birth": "1988-12-13",
+  "position": "PTSGN-POS-STAF-INFRATI-01",
+  "unit": "PTSGN-SUBDIV-INFRATI",
+  "head": false,
+  "parent": null,
+  "fn": "Teknologi Informasi",
+  "edu": [
+   "S1",
+   "Sistem Informasi"
+  ],
+  "start": "2024-03-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1018",
+  "email": "dimas.puspitasari@sgn.example",
+  "name": "Dimas Puspitasari",
+  "nik": "3172100508910018",
+  "birth": "1991-08-05",
+  "position": "PTSGN-POS-STAF-TI-01",
+  "unit": "PTSGN-DIV-TI",
+  "head": false,
+  "parent": null,
+  "fn": "Teknologi Informasi",
+  "edu": [
+   "S1",
+   "Teknik Informatika"
+  ],
+  "start": "2014-02-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1019",
+  "email": "heru.kartini@sgn.example",
+  "name": "Heru Kartini",
+  "nik": "3102230606760019",
+  "birth": "1976-06-06",
+  "position": "PTSGN-POS-KADIV-OPSPROD",
+  "unit": "PTSGN-DIV-OPSPROD",
+  "head": true,
+  "parent": null,
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2024-07-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1020",
+  "email": "gita.lubis@sgn.example",
+  "name": "Gita Lubis",
+  "nik": "3272245412760020",
+  "birth": "1976-12-14",
+  "position": "PTSGN-POS-KASUBDIV-RENPROD",
+  "unit": "PTSGN-SUBDIV-RENPROD",
+  "head": true,
+  "parent": null,
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Industri"
+  ],
+  "start": "2022-06-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1021",
+  "email": "prasetya.safitri@sgn.example",
+  "name": "Prasetya Safitri",
+  "nik": "3271101503840021",
+  "birth": "1984-03-15",
+  "position": "PTSGN-POS-STAF-RENPROD-01",
+  "unit": "PTSGN-SUBDIV-RENPROD",
+  "head": false,
+  "parent": null,
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Industri"
+  ],
+  "start": "2020-08-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1022",
+  "email": "krisna.nasution@sgn.example",
+  "name": "Krisna Nasution",
+  "nik": "3201010901910022",
+  "birth": "1991-01-09",
+  "position": "PTSGN-POS-STAF-OPSPROD-01",
+  "unit": "PTSGN-DIV-OPSPROD",
+  "head": false,
+  "parent": null,
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2023-12-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1023",
+  "email": "tri.saputra@sgn.example",
+  "name": "Tri Saputra",
+  "nik": "3571150301920023",
+  "birth": "1992-01-03",
+  "position": "PTSGN-POS-STAF-OPSPROD-02",
+  "unit": "PTSGN-DIV-OPSPROD",
+  "head": false,
+  "parent": null,
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Teknologi Industri Pertanian"
+  ],
+  "start": "2023-05-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1024",
+  "email": "hadi.effendi@sgn.example",
+  "name": "Hadi Effendi",
+  "nik": "3107200407760024",
+  "birth": "1976-07-04",
+  "position": "PTSGN-POS-KADIV-PENGADAAN",
+  "unit": "PTSGN-DIV-PENGADAAN",
+  "head": true,
+  "parent": "PTSGN-POS-DIRUT",
+  "fn": "Administrasi Umum",
+  "edu": [
+   "S1",
+   "Teknik Industri"
+  ],
+  "start": "2025-05-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1025",
+  "email": "larasati.pohan@sgn.example",
+  "name": "Larasati Pohan",
+  "nik": "3573034112980025",
+  "birth": "1998-12-01",
+  "position": "PTSGN-POS-STAF-PENGADAAN-01",
+  "unit": "PTSGN-DIV-PENGADAAN",
+  "head": false,
+  "parent": "PTSGN-POS-KADIV-PENGADAAN",
+  "fn": "Administrasi Umum",
+  "edu": [
+   "S1",
+   "Manajemen"
+  ],
+  "start": "2020-11-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1026",
+  "email": "arief.budiman@sgn.example",
+  "name": "Arief Budiman",
+  "nik": "3574130512970026",
+  "birth": "1997-12-05",
+  "position": "PTSGN-POS-STAF-PENGADAAN-02",
+  "unit": "PTSGN-DIV-PENGADAAN",
+  "head": false,
+  "parent": "PTSGN-POS-KADIV-PENGADAAN",
+  "fn": "Administrasi Umum",
+  "edu": [
+   "S1",
+   "Teknik Sipil"
+  ],
+  "start": "2015-11-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1027",
+  "email": "indra.mulyadi@sgn.example",
+  "name": "Indra Mulyadi",
+  "nik": "3107230908820027",
+  "birth": "1982-08-09",
+  "position": "PTSGN-POS-KADIV-SPI",
+  "unit": "PTSGN-DIV-SPI",
+  "head": true,
+  "parent": "PTSGN-POS-DIRUT",
+  "fn": "Keuangan & Akuntansi",
+  "edu": [
+   "S1",
+   "Akuntansi"
+  ],
+  "start": "2015-08-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1028",
+  "email": "maharani.nasution@sgn.example",
+  "name": "Maharani Nasution",
+  "nik": "3174136811910028",
+  "birth": "1991-11-28",
+  "position": "PTSGN-POS-STAF-SPI-01",
+  "unit": "PTSGN-DIV-SPI",
+  "head": false,
+  "parent": "PTSGN-POS-KADIV-SPI",
+  "fn": "Keuangan & Akuntansi",
+  "edu": [
+   "S1",
+   "Akuntansi"
+  ],
+  "start": "2019-05-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1029",
+  "email": "novita.lubis@sgn.example",
+  "name": "Novita Lubis",
+  "nik": "3273104408860029",
+  "birth": "1986-08-04",
+  "position": "PTSGN-POS-STAF-SPI-02",
+  "unit": "PTSGN-DIV-SPI",
+  "head": false,
+  "parent": "PTSGN-POS-KADIV-SPI",
+  "fn": "Keuangan & Akuntansi",
+  "edu": [
+   "S1",
+   "Akuntansi"
+  ],
+  "start": "2020-01-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1030",
+  "email": "arief.kurniawan@sgn.example",
+  "name": "Arief Kurniawan",
+  "nik": "3201010711810030",
+  "birth": "1981-11-07",
+  "position": "PTSGN-POS-KADIV-HUKUM",
+  "unit": "PTSGN-DIV-HUKUM",
+  "head": true,
+  "parent": "PTSGN-POS-DIRUT",
+  "fn": "Sekretariat & Hukum",
+  "edu": [
+   "S2",
+   "Ilmu Hukum"
+  ],
+  "start": "2022-07-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1031",
+  "email": "wulan.puspitasari@sgn.example",
+  "name": "Wulan Puspitasari",
+  "nik": "3210214108850031",
+  "birth": "1985-08-01",
+  "position": "PTSGN-POS-STAF-HUKUM-01",
+  "unit": "PTSGN-DIV-HUKUM",
+  "head": false,
+  "parent": "PTSGN-POS-KADIV-HUKUM",
+  "fn": "Sekretariat & Hukum",
+  "edu": [
+   "S1",
+   "Ilmu Hukum"
+  ],
+  "start": "2025-11-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1032",
+  "email": "wulan.wijaya@sgn.example",
+  "name": "Wulan Wijaya",
+  "nik": "3105136705780032",
+  "birth": "1978-05-27",
+  "position": "PTSGN-POS-KADIV-RISIKO",
+  "unit": "PTSGN-DIV-RISIKO",
+  "head": true,
+  "parent": "PTSGN-POS-DIRKEUSDM",
+  "fn": "Keuangan & Akuntansi",
+  "edu": [
+   "S2",
+   "Manajemen Risiko"
+  ],
+  "start": "2014-08-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1033",
+  "email": "gilang.rahardjo@sgn.example",
+  "name": "Gilang Rahardjo",
+  "nik": "3508232312850033",
+  "birth": "1985-12-23",
+  "position": "PTSGN-POS-STAF-RISIKO-01",
+  "unit": "PTSGN-DIV-RISIKO",
+  "head": false,
+  "parent": "PTSGN-POS-KADIV-RISIKO",
+  "fn": "Keuangan & Akuntansi",
+  "edu": [
+   "S1",
+   "Akuntansi"
+  ],
+  "start": "2022-06-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1034",
+  "email": "arief.nasution@sgn.example",
+  "name": "Arief Nasution",
+  "nik": "3207140401760034",
+  "birth": "1976-01-04",
+  "position": "PTSGN-POS-KASUBDIV-PSDMB",
+  "unit": "PTSGN-SUBDIV-PSDMB",
+  "head": true,
+  "parent": "PTSGN-POS-KADIV-SDM",
+  "fn": "Sumber Daya Manusia",
+  "edu": [
+   "S2",
+   "Psikologi Industri dan Organisasi"
+  ],
+  "start": "2021-02-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1035",
+  "email": "edo.pratama@sgn.example",
+  "name": "Edo Pratama",
+  "nik": "3110011111990035",
+  "birth": "1999-11-11",
+  "position": "PTSGN-POS-STAF-PSDMB-01",
+  "unit": "PTSGN-SUBDIV-PSDMB",
+  "head": false,
+  "parent": "PTSGN-POS-KASUBDIV-PSDMB",
+  "fn": "Sumber Daya Manusia",
+  "edu": [
+   "S1",
+   "Psikologi"
+  ],
+  "start": "2017-06-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1036",
+  "email": "amalia.oktaviana@sgn.example",
+  "name": "Amalia Oktaviana",
+  "nik": "3506015204980036",
+  "birth": "1998-04-12",
+  "position": "PTSGN-POS-STAF-PSDMB-02",
+  "unit": "PTSGN-SUBDIV-PSDMB",
+  "head": false,
+  "parent": "PTSGN-POS-KASUBDIV-PSDMB",
+  "fn": "Sumber Daya Manusia",
+  "edu": [
+   "S1",
+   "Manajemen Sumber Daya Manusia"
+  ],
+  "start": "2021-01-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1037",
+  "email": "vina.setiawan@sgn.example",
+  "name": "Vina Setiawan",
+  "nik": "3510254510740037",
+  "birth": "1974-10-05",
+  "position": "PTSGN-POS-KADIV-TEKPOL",
+  "unit": "PTSGN-DIV-TEKPOL",
+  "head": true,
+  "parent": "PTSGN-POS-DIRTEKOPS",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2019-01-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1038",
+  "email": "bella.nugroho@sgn.example",
+  "name": "Bella Nugroho",
+  "nik": "3104026610940038",
+  "birth": "1994-10-26",
+  "position": "PTSGN-POS-STAF-TEKPOL-01",
+  "unit": "PTSGN-DIV-TEKPOL",
+  "head": false,
+  "parent": "PTSGN-POS-KADIV-TEKPOL",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2024-05-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1039",
+  "email": "joko.gunawan@sgn.example",
+  "name": "Joko Gunawan",
+  "nik": "3501022802890039",
+  "birth": "1989-02-28",
+  "position": "PTSGN-POS-STAF-TEKPOL-02",
+  "unit": "PTSGN-DIV-TEKPOL",
+  "head": false,
+  "parent": "PTSGN-POS-KADIV-TEKPOL",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Mesin"
+  ],
+  "start": "2021-09-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1040",
+  "email": "prasetya.firmansyah@sgn.example",
+  "name": "Prasetya Firmansyah",
+  "nik": "3201220306810040",
+  "birth": "1981-06-03",
+  "position": "PTSGN-POS-KADIV-TANAMAN",
+  "unit": "PTSGN-DIV-TANAMAN",
+  "head": true,
+  "parent": "PTSGN-POS-DIRTEKOPS",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2014-09-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1041",
+  "email": "tri.safitri@sgn.example",
+  "name": "Tri Safitri",
+  "nik": "3202022504970041",
+  "birth": "1997-04-25",
+  "position": "PTSGN-POS-STAF-TANAMAN-01",
+  "unit": "PTSGN-DIV-TANAMAN",
+  "head": false,
+  "parent": "PTSGN-POS-KADIV-TANAMAN",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Budidaya Tanaman Perkebunan"
+  ],
+  "start": "2020-12-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1042",
+  "email": "satrio.hartono@sgn.example",
+  "name": "Satrio Hartono",
+  "nik": "3110190709760042",
+  "birth": "1976-09-07",
+  "position": "PTSGN-POS-KADIV-K3L",
+  "unit": "PTSGN-DIV-K3L",
+  "head": true,
+  "parent": "PTSGN-POS-DIRTEKOPS",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Keselamatan dan Kesehatan Kerja"
+  ],
+  "start": "2024-08-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1043",
+  "email": "untung.hasibuan@sgn.example",
+  "name": "Untung Hasibuan",
+  "nik": "3502192605900043",
+  "birth": "1990-05-26",
+  "position": "PTSGN-POS-STAF-K3L-01",
+  "unit": "PTSGN-DIV-K3L",
+  "head": false,
+  "parent": "PTSGN-POS-KADIV-K3L",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Keselamatan dan Kesehatan Kerja"
+  ],
+  "start": "2015-11-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1044",
+  "email": "vina.saputra@sgn.example",
+  "name": "Vina Saputra",
+  "nik": "3506236711000044",
+  "birth": "2000-11-27",
+  "position": "PTSGN-POS-STAF-K3L-02",
+  "unit": "PTSGN-DIV-K3L",
+  "head": false,
+  "parent": "PTSGN-POS-KADIV-K3L",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Teknik Lingkungan"
+  ],
+  "start": "2022-04-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1045",
+  "email": "irfan.kartini@sgn.example",
+  "name": "Irfan Kartini",
+  "nik": "1201252301700045",
+  "birth": "1970-01-23",
+  "position": "PTSGN-POS-SUM1-HEAD",
+  "unit": "PTSGN-CL-SUM1",
+  "head": true,
+  "parent": "PTSGN-POS-DIRTEKOPS",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2025-02-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1046",
+  "email": "hasbi.yuliana@sgn.example",
+  "name": "Hasbi Yuliana",
+  "nik": "1202170508710046",
+  "birth": "1971-08-05",
+  "position": "PTSGN-POS-KWMD-GM",
+  "unit": "PTSGN-PG-KWMD",
+  "head": true,
+  "parent": "PTSGN-POS-SUM1-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2016-04-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1047",
+  "email": "khairul.marlina@sgn.example",
+  "name": "Khairul Marlina",
+  "nik": "1205012001750047",
+  "birth": "1975-01-20",
+  "position": "PTSGN-POS-SESM-GM",
+  "unit": "PTSGN-PG-SESM",
+  "head": true,
+  "parent": "PTSGN-POS-SUM1-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2017-11-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1048",
+  "email": "dedy.santoso@sgn.example",
+  "name": "Dedy Santoso",
+  "nik": "1201041905770048",
+  "birth": "1977-05-19",
+  "position": "PTSGN-POS-KB-SUM1-1-MGR",
+  "unit": "PTSGN-KB-SUM1-1",
+  "head": true,
+  "parent": "PTSGN-POS-SUM1-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2019-02-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1049",
+  "email": "hasbi.rahardjo@sgn.example",
+  "name": "Hasbi Rahardjo",
+  "nik": "1203081010770049",
+  "birth": "1977-10-10",
+  "position": "PTSGN-POS-KB-SUM1-2-MGR",
+  "unit": "PTSGN-KB-SUM1-2",
+  "head": true,
+  "parent": "PTSGN-POS-SUM1-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2024-01-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1050",
+  "email": "mawar.andriani@sgn.example",
+  "name": "Mawar Andriani",
+  "nik": "1809154207730050",
+  "birth": "1973-07-02",
+  "position": "PTSGN-POS-SUM2-HEAD",
+  "unit": "PTSGN-CL-SUM2",
+  "head": true,
+  "parent": "PTSGN-POS-DIRTEKOPS",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2017-11-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1051",
+  "email": "syarifah.prakoso@sgn.example",
+  "name": "Syarifah Prakoso",
+  "nik": "1810244110740051",
+  "birth": "1974-10-01",
+  "position": "PTSGN-POS-BUMA-GM",
+  "unit": "PTSGN-PG-BUMA",
+  "head": true,
+  "parent": "PTSGN-POS-SUM2-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2017-07-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1052",
+  "email": "bahrul.rahardjo@sgn.example",
+  "name": "Bahrul Rahardjo",
+  "nik": "1810040212770052",
+  "birth": "1977-12-02",
+  "position": "PTSGN-POS-BUMA-TAN-MGR",
+  "unit": "PTSGN-BUMA-TAN",
+  "head": true,
+  "parent": "PTSGN-POS-BUMA-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2015-02-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1053",
+  "email": "rahmah.harahap@sgn.example",
+  "name": "Rahmah Harahap",
+  "nik": "1873035812770053",
+  "birth": "1977-12-18",
+  "position": "PTSGN-POS-BUMA-OLH-MGR",
+  "unit": "PTSGN-BUMA-OLH",
+  "head": true,
+  "parent": "PTSGN-POS-BUMA-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2021-11-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1054",
+  "email": "fauzan.aprilia@sgn.example",
+  "name": "Fauzan Aprilia",
+  "nik": "1805132811720054",
+  "birth": "1972-11-28",
+  "position": "PTSGN-POS-BUMA-QA-MGR",
+  "unit": "PTSGN-BUMA-QA",
+  "head": true,
+  "parent": "PTSGN-POS-BUMA-GM",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Teknologi Industri Pertanian"
+  ],
+  "start": "2015-03-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1055",
+  "email": "fauzan.safitri@sgn.example",
+  "name": "Fauzan Safitri",
+  "nik": "1810051310740055",
+  "birth": "1974-10-13",
+  "position": "PTSGN-POS-BUMA-TEK-MGR",
+  "unit": "PTSGN-BUMA-TEK",
+  "head": true,
+  "parent": "PTSGN-POS-BUMA-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Mesin"
+  ],
+  "start": "2022-07-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1056",
+  "email": "hasbi.siregar@sgn.example",
+  "name": "Hasbi Siregar",
+  "nik": "1873160711790056",
+  "birth": "1979-11-07",
+  "position": "PTSGN-POS-BUMA-AKU-MGR",
+  "unit": "PTSGN-BUMA-AKU",
+  "head": true,
+  "parent": "PTSGN-POS-BUMA-GM",
+  "fn": "Administrasi Umum",
+  "edu": [
+   "S1",
+   "Akuntansi"
+  ],
+  "start": "2022-03-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1057",
+  "email": "fitria.siregar@sgn.example",
+  "name": "Fitria Siregar",
+  "nik": "1601025008750057",
+  "birth": "1975-08-10",
+  "position": "PTSGN-POS-CIMA-GM",
+  "unit": "PTSGN-PG-CIMA",
+  "head": true,
+  "parent": "PTSGN-POS-SUM2-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2014-04-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1058",
+  "email": "dedy.gunawan@sgn.example",
+  "name": "Dedy Gunawan",
+  "nik": "1673200408820058",
+  "birth": "1982-08-04",
+  "position": "PTSGN-POS-CIMA-TAN-MGR",
+  "unit": "PTSGN-CIMA-TAN",
+  "head": true,
+  "parent": "PTSGN-POS-CIMA-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2016-07-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1059",
+  "email": "irfan.harahap@sgn.example",
+  "name": "Irfan Harahap",
+  "nik": "1607161504820059",
+  "birth": "1982-04-15",
+  "position": "PTSGN-POS-CIMA-OLH-MGR",
+  "unit": "PTSGN-CIMA-OLH",
+  "head": true,
+  "parent": "PTSGN-POS-CIMA-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2019-10-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1060",
+  "email": "dedy.setiawan@sgn.example",
+  "name": "Dedy Setiawan",
+  "nik": "1608112306710060",
+  "birth": "1971-06-23",
+  "position": "PTSGN-POS-CIMA-QA-MGR",
+  "unit": "PTSGN-CIMA-QA",
+  "head": true,
+  "parent": "PTSGN-POS-CIMA-GM",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Teknologi Industri Pertanian"
+  ],
+  "start": "2020-07-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1061",
+  "email": "irfan.gunawan@sgn.example",
+  "name": "Irfan Gunawan",
+  "nik": "1673182102850061",
+  "birth": "1985-02-21",
+  "position": "PTSGN-POS-CIMA-TEK-MGR",
+  "unit": "PTSGN-CIMA-TEK",
+  "head": true,
+  "parent": "PTSGN-POS-CIMA-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Mesin"
+  ],
+  "start": "2019-08-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1062",
+  "email": "fitria.maulana@sgn.example",
+  "name": "Fitria Maulana",
+  "nik": "1672154108820062",
+  "birth": "1982-08-01",
+  "position": "PTSGN-POS-CIMA-AKU-MGR",
+  "unit": "PTSGN-CIMA-AKU",
+  "head": true,
+  "parent": "PTSGN-POS-CIMA-GM",
+  "fn": "Administrasi Umum",
+  "edu": [
+   "S1",
+   "Akuntansi"
+  ],
+  "start": "2018-10-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1063",
+  "email": "jefri.wicaksono@sgn.example",
+  "name": "Jefri Wicaksono",
+  "nik": "1874110908720063",
+  "birth": "1972-08-09",
+  "position": "PTSGN-POS-KB-SUM2-1-MGR",
+  "unit": "PTSGN-KB-SUM2-1",
+  "head": true,
+  "parent": "PTSGN-POS-SUM2-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2023-02-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1064",
+  "email": "chandra.pratama@sgn.example",
+  "name": "Chandra Pratama",
+  "nik": "1806221205730064",
+  "birth": "1973-05-12",
+  "position": "PTSGN-POS-KB-SUM2-2-MGR",
+  "unit": "PTSGN-KB-SUM2-2",
+  "head": true,
+  "parent": "PTSGN-POS-SUM2-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2017-03-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1065",
+  "email": "irfan.permana@sgn.example",
+  "name": "Irfan Permana",
+  "nik": "1874040201810065",
+  "birth": "1981-01-02",
+  "position": "PTSGN-POS-KB-SUM2-3-MGR",
+  "unit": "PTSGN-KB-SUM2-3",
+  "head": true,
+  "parent": "PTSGN-POS-SUM2-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2018-01-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1066",
+  "email": "eko.harahap@sgn.example",
+  "name": "Eko Harahap",
+  "nik": "3303101309760066",
+  "birth": "1976-09-13",
+  "position": "PTSGN-POS-JWB-HEAD",
+  "unit": "PTSGN-CL-JWB",
+  "head": true,
+  "parent": "PTSGN-POS-DIRTEKOPS",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2022-07-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1067",
+  "email": "bintang.rahardjo@sgn.example",
+  "name": "Bintang Rahardjo",
+  "nik": "3374171006690067",
+  "birth": "1969-06-10",
+  "position": "PTSGN-POS-PANG-GM",
+  "unit": "PTSGN-PG-PANG",
+  "head": true,
+  "parent": "PTSGN-POS-JWB-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2022-10-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1068",
+  "email": "vina.lestari@sgn.example",
+  "name": "Vina Lestari",
+  "nik": "3304224506720068",
+  "birth": "1972-06-05",
+  "position": "PTSGN-POS-SRAG-GM",
+  "unit": "PTSGN-PG-SRAG",
+  "head": true,
+  "parent": "PTSGN-POS-JWB-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2014-04-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1069",
+  "email": "heru.andriani@sgn.example",
+  "name": "Heru Andriani",
+  "nik": "3301180504710069",
+  "birth": "1971-04-05",
+  "position": "PTSGN-POS-SRAG-TAN-MGR",
+  "unit": "PTSGN-SRAG-TAN",
+  "head": true,
+  "parent": "PTSGN-POS-SRAG-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2025-01-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1070",
+  "email": "bintang.permana@sgn.example",
+  "name": "Bintang Permana",
+  "nik": "3310250705820070",
+  "birth": "1982-05-07",
+  "position": "PTSGN-POS-SRAG-OLH-MGR",
+  "unit": "PTSGN-SRAG-OLH",
+  "head": true,
+  "parent": "PTSGN-POS-SRAG-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2015-07-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1071",
+  "email": "larasati.wulandari@sgn.example",
+  "name": "Larasati Wulandari",
+  "nik": "3306145306010071",
+  "birth": "2001-06-13",
+  "position": "PTSGN-POS-SRAG-OLH-AST",
+  "unit": "PTSGN-SRAG-OLH",
+  "head": false,
+  "parent": "PTSGN-POS-SRAG-OLH-MGR",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2016-04-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1072",
+  "email": "denny.purnomo@sgn.example",
+  "name": "Denny Purnomo",
+  "nik": "3301091701820072",
+  "birth": "1982-01-17",
+  "position": "PTSGN-POS-SRAG-QA-MGR",
+  "unit": "PTSGN-SRAG-QA",
+  "head": true,
+  "parent": "PTSGN-POS-SRAG-GM",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Teknologi Industri Pertanian"
+  ],
+  "start": "2019-02-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1073",
+  "email": "rani.ramadhan@sgn.example",
+  "name": "Rani Ramadhan",
+  "nik": "3310194906870073",
+  "birth": "1987-06-09",
+  "position": "PTSGN-POS-SRAG-QA-AST",
+  "unit": "PTSGN-SRAG-QA",
+  "head": false,
+  "parent": "PTSGN-POS-SRAG-QA-MGR",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Teknologi Industri Pertanian"
+  ],
+  "start": "2021-06-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1074",
+  "email": "agus.aprilia@sgn.example",
+  "name": "Agus Aprilia",
+  "nik": "3305062408850074",
+  "birth": "1985-08-24",
+  "position": "PTSGN-POS-SRAG-TEK-MGR",
+  "unit": "PTSGN-SRAG-TEK",
+  "head": true,
+  "parent": "PTSGN-POS-SRAG-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Mesin"
+  ],
+  "start": "2018-11-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1075",
+  "email": "krisna.hartono@sgn.example",
+  "name": "Krisna Hartono",
+  "nik": "3374062608760075",
+  "birth": "1976-08-26",
+  "position": "PTSGN-POS-SRAG-AKU-MGR",
+  "unit": "PTSGN-SRAG-AKU",
+  "head": true,
+  "parent": "PTSGN-POS-SRAG-GM",
+  "fn": "Administrasi Umum",
+  "edu": [
+   "S1",
+   "Akuntansi"
+  ],
+  "start": "2018-08-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1076",
+  "email": "bella.maulana@sgn.example",
+  "name": "Bella Maulana",
+  "nik": "3305215402710076",
+  "birth": "1971-02-14",
+  "position": "PTSGN-POS-REND-GM",
+  "unit": "PTSGN-PG-REND",
+  "head": true,
+  "parent": "PTSGN-POS-JWB-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2014-07-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1077",
+  "email": "ayu.purnomo@sgn.example",
+  "name": "Ayu Purnomo",
+  "nik": "3304106010730077",
+  "birth": "1973-10-20",
+  "position": "PTSGN-POS-REND-TAN-MGR",
+  "unit": "PTSGN-REND-TAN",
+  "head": true,
+  "parent": "PTSGN-POS-REND-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2024-12-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1078",
+  "email": "rani.cahyono@sgn.example",
+  "name": "Rani Cahyono",
+  "nik": "3374084909770078",
+  "birth": "1977-09-09",
+  "position": "PTSGN-POS-REND-OLH-MGR",
+  "unit": "PTSGN-REND-OLH",
+  "head": true,
+  "parent": "PTSGN-POS-REND-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2020-07-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1079",
+  "email": "anton.febrianti@sgn.example",
+  "name": "Anton Febrianti",
+  "nik": "3372241408820079",
+  "birth": "1982-08-14",
+  "position": "PTSGN-POS-REND-QA-MGR",
+  "unit": "PTSGN-REND-QA",
+  "head": true,
+  "parent": "PTSGN-POS-REND-GM",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Teknologi Industri Pertanian"
+  ],
+  "start": "2017-09-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1080",
+  "email": "tika.febrianti@sgn.example",
+  "name": "Tika Febrianti",
+  "nik": "3371026605710080",
+  "birth": "1971-05-26",
+  "position": "PTSGN-POS-REND-TEK-MGR",
+  "unit": "PTSGN-REND-TEK",
+  "head": true,
+  "parent": "PTSGN-POS-REND-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Mesin"
+  ],
+  "start": "2025-06-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1081",
+  "email": "oki.kurniawan@sgn.example",
+  "name": "Oki Kurniawan",
+  "nik": "3306252206800081",
+  "birth": "1980-06-22",
+  "position": "PTSGN-POS-REND-AKU-MGR",
+  "unit": "PTSGN-REND-AKU",
+  "head": true,
+  "parent": "PTSGN-POS-REND-GM",
+  "fn": "Administrasi Umum",
+  "edu": [
+   "S1",
+   "Akuntansi"
+  ],
+  "start": "2021-01-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1082",
+  "email": "krisna.safitri@sgn.example",
+  "name": "Krisna Safitri",
+  "nik": "3301240212700082",
+  "birth": "1970-12-02",
+  "position": "PTSGN-POS-MOJO-GM",
+  "unit": "PTSGN-PG-MOJO",
+  "head": true,
+  "parent": "PTSGN-POS-JWB-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2025-05-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1083",
+  "email": "zainal.hidayat@sgn.example",
+  "name": "Zainal Hidayat",
+  "nik": "3309112305750083",
+  "birth": "1975-05-23",
+  "position": "PTSGN-POS-MOJO-TAN-MGR",
+  "unit": "PTSGN-MOJO-TAN",
+  "head": true,
+  "parent": "PTSGN-POS-MOJO-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2014-11-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1084",
+  "email": "ilham.hidayat@sgn.example",
+  "name": "Ilham Hidayat",
+  "nik": "3303061312760084",
+  "birth": "1976-12-13",
+  "position": "PTSGN-POS-MOJO-OLH-MGR",
+  "unit": "PTSGN-MOJO-OLH",
+  "head": true,
+  "parent": "PTSGN-POS-MOJO-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2016-10-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1085",
+  "email": "retno.firmansyah@sgn.example",
+  "name": "Retno Firmansyah",
+  "nik": "3371036003790085",
+  "birth": "1979-03-20",
+  "position": "PTSGN-POS-MOJO-QA-MGR",
+  "unit": "PTSGN-MOJO-QA",
+  "head": true,
+  "parent": "PTSGN-POS-MOJO-GM",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Teknologi Industri Pertanian"
+  ],
+  "start": "2018-11-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1086",
+  "email": "denny.budiman@sgn.example",
+  "name": "Denny Budiman",
+  "nik": "3371230101840086",
+  "birth": "1984-01-01",
+  "position": "PTSGN-POS-MOJO-TEK-MGR",
+  "unit": "PTSGN-MOJO-TEK",
+  "head": true,
+  "parent": "PTSGN-POS-MOJO-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Mesin"
+  ],
+  "start": "2014-09-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1087",
+  "email": "galih.wicaksono@sgn.example",
+  "name": "Galih Wicaksono",
+  "nik": "3304011912790087",
+  "birth": "1979-12-19",
+  "position": "PTSGN-POS-MOJO-AKU-MGR",
+  "unit": "PTSGN-MOJO-AKU",
+  "head": true,
+  "parent": "PTSGN-POS-MOJO-GM",
+  "fn": "Administrasi Umum",
+  "edu": [
+   "S1",
+   "Akuntansi"
+  ],
+  "start": "2016-02-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1088",
+  "email": "kurnia.effendi@sgn.example",
+  "name": "Kurnia Effendi",
+  "nik": "3305170903730088",
+  "birth": "1973-03-09",
+  "position": "PTSGN-POS-TASM-GM",
+  "unit": "PTSGN-PG-TASM",
+  "head": true,
+  "parent": "PTSGN-POS-JWB-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2025-09-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1089",
+  "email": "yudha.oktaviana@sgn.example",
+  "name": "Yudha Oktaviana",
+  "nik": "3573072101740089",
+  "birth": "1974-01-21",
+  "position": "PTSGN-POS-SOED-GM",
+  "unit": "PTSGN-PG-SOED",
+  "head": true,
+  "parent": "PTSGN-POS-JWB-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2021-11-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1090",
+  "email": "joko.marlina@sgn.example",
+  "name": "Joko Marlina",
+  "nik": "3574191001740090",
+  "birth": "1974-01-10",
+  "position": "PTSGN-POS-POER-GM",
+  "unit": "PTSGN-PG-POER",
+  "head": true,
+  "parent": "PTSGN-POS-JWB-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2019-04-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1091",
+  "email": "sekar.hasibuan@sgn.example",
+  "name": "Sekar Hasibuan",
+  "nik": "3508046410750091",
+  "birth": "1975-10-24",
+  "position": "PTSGN-POS-REDJ-GM",
+  "unit": "PTSGN-PG-REDJ",
+  "head": true,
+  "parent": "PTSGN-POS-JWB-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2025-01-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1092",
+  "email": "mahendra.pohan@sgn.example",
+  "name": "Mahendra Pohan",
+  "nik": "3506142503780092",
+  "birth": "1978-03-25",
+  "position": "PTSGN-POS-PAGO-GM",
+  "unit": "PTSGN-PG-PAGO",
+  "head": true,
+  "parent": "PTSGN-POS-JWB-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2015-04-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1093",
+  "email": "mahendra.kartini@sgn.example",
+  "name": "Mahendra Kartini",
+  "nik": "3308111105710093",
+  "birth": "1971-05-11",
+  "position": "PTSGN-POS-KB-JWB-1-MGR",
+  "unit": "PTSGN-KB-JWB-1",
+  "head": true,
+  "parent": "PTSGN-POS-JWB-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2019-11-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1094",
+  "email": "hadi.oktaviana@sgn.example",
+  "name": "Hadi Oktaviana",
+  "nik": "3504180501740094",
+  "birth": "1974-01-05",
+  "position": "PTSGN-POS-JT1-HEAD",
+  "unit": "PTSGN-CL-JT1",
+  "head": true,
+  "parent": "PTSGN-POS-DIRTEKOPS",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2014-09-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1095",
+  "email": "nanda.lubis@sgn.example",
+  "name": "Nanda Lubis",
+  "nik": "3572252411770095",
+  "birth": "1977-11-24",
+  "position": "PTSGN-POS-TJOE-GM",
+  "unit": "PTSGN-PG-TJOE",
+  "head": true,
+  "parent": "PTSGN-POS-JT1-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2020-07-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1096",
+  "email": "farah.suryanto@sgn.example",
+  "name": "Farah Suryanto",
+  "nik": "3572255701690096",
+  "birth": "1969-01-17",
+  "position": "PTSGN-POS-MERI-GM",
+  "unit": "PTSGN-PG-MERI",
+  "head": true,
+  "parent": "PTSGN-POS-JT1-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2021-10-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1097",
+  "email": "zainal.effendi@sgn.example",
+  "name": "Zainal Effendi",
+  "nik": "3572100301760097",
+  "birth": "1976-01-03",
+  "position": "PTSGN-POS-PEBA-GM",
+  "unit": "PTSGN-PG-PEBA",
+  "head": true,
+  "parent": "PTSGN-POS-JT1-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2017-03-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1098",
+  "email": "arief.lubis@sgn.example",
+  "name": "Arief Lubis",
+  "nik": "3505242110760098",
+  "birth": "1976-10-21",
+  "position": "PTSGN-POS-PEBA-TAN-MGR",
+  "unit": "PTSGN-PEBA-TAN",
+  "head": true,
+  "parent": "PTSGN-POS-PEBA-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2025-05-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1099",
+  "email": "bintang.oktaviana@sgn.example",
+  "name": "Bintang Oktaviana",
+  "nik": "3501121901780099",
+  "birth": "1978-01-19",
+  "position": "PTSGN-POS-PEBA-OLH-MGR",
+  "unit": "PTSGN-PEBA-OLH",
+  "head": true,
+  "parent": "PTSGN-POS-PEBA-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2022-09-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1100",
+  "email": "retno.harahap@sgn.example",
+  "name": "Retno Harahap",
+  "nik": "3571136106010100",
+  "birth": "2001-06-21",
+  "position": "PTSGN-POS-PEBA-OLH-AST",
+  "unit": "PTSGN-PEBA-OLH",
+  "head": false,
+  "parent": "PTSGN-POS-PEBA-OLH-MGR",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2024-11-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1101",
+  "email": "mahendra.aprilia@sgn.example",
+  "name": "Mahendra Aprilia",
+  "nik": "3572010903850101",
+  "birth": "1985-03-09",
+  "position": "PTSGN-POS-PEBA-QA-MGR",
+  "unit": "PTSGN-PEBA-QA",
+  "head": true,
+  "parent": "PTSGN-POS-PEBA-GM",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Teknologi Industri Pertanian"
+  ],
+  "start": "2017-01-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1102",
+  "email": "tika.setiawan@sgn.example",
+  "name": "Tika Setiawan",
+  "nik": "3572054407930102",
+  "birth": "1993-07-04",
+  "position": "PTSGN-POS-PEBA-QA-AST",
+  "unit": "PTSGN-PEBA-QA",
+  "head": false,
+  "parent": "PTSGN-POS-PEBA-QA-MGR",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Teknologi Industri Pertanian"
+  ],
+  "start": "2016-11-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1103",
+  "email": "gita.nugroho@sgn.example",
+  "name": "Gita Nugroho",
+  "nik": "3503166705740103",
+  "birth": "1974-05-27",
+  "position": "PTSGN-POS-PEBA-TEK-MGR",
+  "unit": "PTSGN-PEBA-TEK",
+  "head": true,
+  "parent": "PTSGN-POS-PEBA-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Mesin"
+  ],
+  "start": "2014-11-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1104",
+  "email": "arief.setiawan@sgn.example",
+  "name": "Arief Setiawan",
+  "nik": "3505200601810104",
+  "birth": "1981-01-06",
+  "position": "PTSGN-POS-PEBA-AKU-MGR",
+  "unit": "PTSGN-PEBA-AKU",
+  "head": true,
+  "parent": "PTSGN-POS-PEBA-GM",
+  "fn": "Administrasi Umum",
+  "edu": [
+   "S1",
+   "Akuntansi"
+  ],
+  "start": "2022-06-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1105",
+  "email": "mega.wibowo@sgn.example",
+  "name": "Mega Wibowo",
+  "nik": "3508086205740105",
+  "birth": "1974-05-22",
+  "position": "PTSGN-POS-NGAD-GM",
+  "unit": "PTSGN-PG-NGAD",
+  "head": true,
+  "parent": "PTSGN-POS-JT1-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2020-07-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1106",
+  "email": "oki.nugroho@sgn.example",
+  "name": "Oki Nugroho",
+  "nik": "3572142402730106",
+  "birth": "1973-02-24",
+  "position": "PTSGN-POS-MODJ-GM",
+  "unit": "PTSGN-PG-MODJ",
+  "head": true,
+  "parent": "PTSGN-POS-JT1-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2018-08-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1107",
+  "email": "mega.handayani@sgn.example",
+  "name": "Mega Handayani",
+  "nik": "3508115106780107",
+  "birth": "1978-06-11",
+  "position": "PTSGN-POS-KB-JT1-1-MGR",
+  "unit": "PTSGN-KB-JT1-1",
+  "head": true,
+  "parent": "PTSGN-POS-JT1-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2024-02-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1108",
+  "email": "yoga.siregar@sgn.example",
+  "name": "Yoga Siregar",
+  "nik": "3572162612700108",
+  "birth": "1970-12-26",
+  "position": "PTSGN-POS-JT2-HEAD",
+  "unit": "PTSGN-CL-JT2",
+  "head": true,
+  "parent": "PTSGN-POS-DIRTEKOPS",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2018-07-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1109",
+  "email": "dewi.kurniawan@sgn.example",
+  "name": "Dewi Kurniawan",
+  "nik": "3510254111710109",
+  "birth": "1971-11-01",
+  "position": "PTSGN-POS-KREM-GM",
+  "unit": "PTSGN-PG-KREM",
+  "head": true,
+  "parent": "PTSGN-POS-JT2-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2022-09-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1110",
+  "email": "bella.effendi@sgn.example",
+  "name": "Bella Effendi",
+  "nik": "3505214205690110",
+  "birth": "1969-05-02",
+  "position": "PTSGN-POS-GEMP-GM",
+  "unit": "PTSGN-PG-GEMP",
+  "head": true,
+  "parent": "PTSGN-POS-JT2-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2017-05-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1111",
+  "email": "yudha.permana@sgn.example",
+  "name": "Yudha Permana",
+  "nik": "3508111712700111",
+  "birth": "1970-12-17",
+  "position": "PTSGN-POS-DJOM-GM",
+  "unit": "PTSGN-PG-DJOM",
+  "head": true,
+  "parent": "PTSGN-POS-JT2-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2018-04-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1112",
+  "email": "mega.suryanto@sgn.example",
+  "name": "Mega Suryanto",
+  "nik": "3509114211700112",
+  "birth": "1970-11-02",
+  "position": "PTSGN-POS-LEST-GM",
+  "unit": "PTSGN-PG-LEST",
+  "head": true,
+  "parent": "PTSGN-POS-JT2-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2024-06-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1113",
+  "email": "heru.permana@sgn.example",
+  "name": "Heru Permana",
+  "nik": "3502081501840113",
+  "birth": "1984-01-15",
+  "position": "PTSGN-POS-KB-JT2-1-MGR",
+  "unit": "PTSGN-KB-JT2-1",
+  "head": true,
+  "parent": "PTSGN-POS-JT2-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2024-01-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1114",
+  "email": "heru.oktaviana@sgn.example",
+  "name": "Heru Oktaviana",
+  "nik": "3501232807700114",
+  "birth": "1970-07-28",
+  "position": "PTSGN-POS-JT3-HEAD",
+  "unit": "PTSGN-CL-JT3",
+  "head": true,
+  "parent": "PTSGN-POS-DIRTEKOPS",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2019-02-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1115",
+  "email": "gilang.marlina@sgn.example",
+  "name": "Gilang Marlina",
+  "nik": "3571090303760115",
+  "birth": "1976-03-03",
+  "position": "PTSGN-POS-KEDA-GM",
+  "unit": "PTSGN-PG-KEDA",
+  "head": true,
+  "parent": "PTSGN-POS-JT3-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2025-09-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1116",
+  "email": "danu.mulyadi@sgn.example",
+  "name": "Danu Mulyadi",
+  "nik": "3573191010690116",
+  "birth": "1969-10-10",
+  "position": "PTSGN-POS-WONO-GM",
+  "unit": "PTSGN-PG-WONO",
+  "head": true,
+  "parent": "PTSGN-POS-JT3-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2017-11-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1117",
+  "email": "satrio.aprilia@sgn.example",
+  "name": "Satrio Aprilia",
+  "nik": "3504141805700117",
+  "birth": "1970-05-18",
+  "position": "PTSGN-POS-GEND-GM",
+  "unit": "PTSGN-PG-GEND",
+  "head": true,
+  "parent": "PTSGN-POS-JT3-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2020-02-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1118",
+  "email": "bagas.ramadhan@sgn.example",
+  "name": "Bagas Ramadhan",
+  "nik": "3506192005690118",
+  "birth": "1969-05-20",
+  "position": "PTSGN-POS-DJAT-GM",
+  "unit": "PTSGN-PG-DJAT",
+  "head": true,
+  "parent": "PTSGN-POS-JT3-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2018-01-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1119",
+  "email": "krisna.oktaviana@sgn.example",
+  "name": "Krisna Oktaviana",
+  "nik": "3504132106850119",
+  "birth": "1985-06-21",
+  "position": "PTSGN-POS-DJAT-TAN-MGR",
+  "unit": "PTSGN-DJAT-TAN",
+  "head": true,
+  "parent": "PTSGN-POS-DJAT-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2016-01-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1120",
+  "email": "nanda.nugroho@sgn.example",
+  "name": "Nanda Nugroho",
+  "nik": "3502102109750120",
+  "birth": "1975-09-21",
+  "position": "PTSGN-POS-DJAT-OLH-MGR",
+  "unit": "PTSGN-DJAT-OLH",
+  "head": true,
+  "parent": "PTSGN-POS-DJAT-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2025-04-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1121",
+  "email": "utami.ramadhan@sgn.example",
+  "name": "Utami Ramadhan",
+  "nik": "3574015111910121",
+  "birth": "1991-11-11",
+  "position": "PTSGN-POS-DJAT-OLH-AST",
+  "unit": "PTSGN-DJAT-OLH",
+  "head": false,
+  "parent": "PTSGN-POS-DJAT-OLH-MGR",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2023-02-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1122",
+  "email": "edo.saragih@sgn.example",
+  "name": "Edo Saragih",
+  "nik": "3573070612740122",
+  "birth": "1974-12-06",
+  "position": "PTSGN-POS-DJAT-QA-MGR",
+  "unit": "PTSGN-DJAT-QA",
+  "head": true,
+  "parent": "PTSGN-POS-DJAT-GM",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Teknologi Industri Pertanian"
+  ],
+  "start": "2024-09-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1123",
+  "email": "kurnia.wibowo@sgn.example",
+  "name": "Kurnia Wibowo",
+  "nik": "3504201202940123",
+  "birth": "1994-02-12",
+  "position": "PTSGN-POS-DJAT-QA-AST",
+  "unit": "PTSGN-DJAT-QA",
+  "head": false,
+  "parent": "PTSGN-POS-DJAT-QA-MGR",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Teknologi Industri Pertanian"
+  ],
+  "start": "2016-09-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1124",
+  "email": "mega.lestari@sgn.example",
+  "name": "Mega Lestari",
+  "nik": "3571164702740124",
+  "birth": "1974-02-07",
+  "position": "PTSGN-POS-DJAT-TEK-MGR",
+  "unit": "PTSGN-DJAT-TEK",
+  "head": true,
+  "parent": "PTSGN-POS-DJAT-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Mesin"
+  ],
+  "start": "2024-08-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1125",
+  "email": "wulan.rahmawati@sgn.example",
+  "name": "Wulan Rahmawati",
+  "nik": "3501124609830125",
+  "birth": "1983-09-06",
+  "position": "PTSGN-POS-DJAT-AKU-MGR",
+  "unit": "PTSGN-DJAT-AKU",
+  "head": true,
+  "parent": "PTSGN-POS-DJAT-GM",
+  "fn": "Administrasi Umum",
+  "edu": [
+   "S1",
+   "Akuntansi"
+  ],
+  "start": "2014-05-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1126",
+  "email": "larasati.aprilia@sgn.example",
+  "name": "Larasati Aprilia",
+  "nik": "3508066011760126",
+  "birth": "1976-11-20",
+  "position": "PTSGN-POS-SEMB-GM",
+  "unit": "PTSGN-PG-SEMB",
+  "head": true,
+  "parent": "PTSGN-POS-JT3-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2019-09-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1127",
+  "email": "prasetya.suryanto@sgn.example",
+  "name": "Prasetya Suryanto",
+  "nik": "3574220310790127",
+  "birth": "1979-10-03",
+  "position": "PTSGN-POS-KB-JT3-1-MGR",
+  "unit": "PTSGN-KB-JT3-1",
+  "head": true,
+  "parent": "PTSGN-POS-JT3-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2019-12-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1128",
+  "email": "dewi.kartini@sgn.example",
+  "name": "Dewi Kartini",
+  "nik": "3510225307700128",
+  "birth": "1970-07-13",
+  "position": "PTSGN-POS-JT4-HEAD",
+  "unit": "PTSGN-CL-JT4",
+  "head": true,
+  "parent": "PTSGN-POS-DIRTEKOPS",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2017-07-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1129",
+  "email": "juwita.saragih@sgn.example",
+  "name": "Juwita Saragih",
+  "nik": "3574154607740129",
+  "birth": "1974-07-06",
+  "position": "PTSGN-POS-WRIN-GM",
+  "unit": "PTSGN-PG-WRIN",
+  "head": true,
+  "parent": "PTSGN-POS-JT4-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2022-12-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1130",
+  "email": "prasetya.santoso@sgn.example",
+  "name": "Prasetya Santoso",
+  "nik": "3507111112700130",
+  "birth": "1970-12-11",
+  "position": "PTSGN-POS-OLEA-GM",
+  "unit": "PTSGN-PG-OLEA",
+  "head": true,
+  "parent": "PTSGN-POS-JT4-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2024-03-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1131",
+  "email": "wahyu.hasibuan@sgn.example",
+  "name": "Wahyu Hasibuan",
+  "nik": "3505160408720131",
+  "birth": "1972-08-04",
+  "position": "PTSGN-POS-PAND-GM",
+  "unit": "PTSGN-PG-PAND",
+  "head": true,
+  "parent": "PTSGN-POS-JT4-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2019-06-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1132",
+  "email": "tika.pratama@sgn.example",
+  "name": "Tika Pratama",
+  "nik": "3506136711690132",
+  "birth": "1969-11-27",
+  "position": "PTSGN-POS-ASEM-GM",
+  "unit": "PTSGN-PG-ASEM",
+  "head": true,
+  "parent": "PTSGN-POS-JT4-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2025-08-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1133",
+  "email": "puspita.anggara@sgn.example",
+  "name": "Puspita Anggara",
+  "nik": "3502245402700133",
+  "birth": "1970-02-14",
+  "position": "PTSGN-POS-PRAD-GM",
+  "unit": "PTSGN-PG-PRAD",
+  "head": true,
+  "parent": "PTSGN-POS-JT4-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2023-03-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1134",
+  "email": "arief.yuliana@sgn.example",
+  "name": "Arief Yuliana",
+  "nik": "3502091311750134",
+  "birth": "1975-11-13",
+  "position": "PTSGN-POS-GLEN-GM",
+  "unit": "PTSGN-PG-GLEN",
+  "head": true,
+  "parent": "PTSGN-POS-JT4-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2022-03-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1135",
+  "email": "agus.effendi@sgn.example",
+  "name": "Agus Effendi",
+  "nik": "3573072409740135",
+  "birth": "1974-09-24",
+  "position": "PTSGN-POS-GLEN-TAN-MGR",
+  "unit": "PTSGN-GLEN-TAN",
+  "head": true,
+  "parent": "PTSGN-POS-GLEN-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2024-11-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1136",
+  "email": "fandi.budiman@sgn.example",
+  "name": "Fandi Budiman",
+  "nik": "3504080706760136",
+  "birth": "1976-06-07",
+  "position": "PTSGN-POS-GLEN-OLH-MGR",
+  "unit": "PTSGN-GLEN-OLH",
+  "head": true,
+  "parent": "PTSGN-POS-GLEN-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2025-01-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1137",
+  "email": "nanda.saragih@sgn.example",
+  "name": "Nanda Saragih",
+  "nik": "3501110612960137",
+  "birth": "1996-12-06",
+  "position": "PTSGN-POS-GLEN-OLH-AST",
+  "unit": "PTSGN-GLEN-OLH",
+  "head": false,
+  "parent": "PTSGN-POS-GLEN-OLH-MGR",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2023-02-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1138",
+  "email": "bintang.handayani@sgn.example",
+  "name": "Bintang Handayani",
+  "nik": "3501021010740138",
+  "birth": "1974-10-10",
+  "position": "PTSGN-POS-GLEN-QA-MGR",
+  "unit": "PTSGN-GLEN-QA",
+  "head": true,
+  "parent": "PTSGN-POS-GLEN-GM",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Teknologi Industri Pertanian"
+  ],
+  "start": "2021-02-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1139",
+  "email": "arief.suryanto@sgn.example",
+  "name": "Arief Suryanto",
+  "nik": "3571031805910139",
+  "birth": "1991-05-18",
+  "position": "PTSGN-POS-GLEN-QA-AST",
+  "unit": "PTSGN-GLEN-QA",
+  "head": false,
+  "parent": "PTSGN-POS-GLEN-QA-MGR",
+  "fn": "Pengendalian Mutu",
+  "edu": [
+   "S1",
+   "Teknologi Industri Pertanian"
+  ],
+  "start": "2022-06-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1140",
+  "email": "agus.rahardjo@sgn.example",
+  "name": "Agus Rahardjo",
+  "nik": "3501170206770140",
+  "birth": "1977-06-02",
+  "position": "PTSGN-POS-GLEN-TEK-MGR",
+  "unit": "PTSGN-GLEN-TEK",
+  "head": true,
+  "parent": "PTSGN-POS-GLEN-GM",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Teknik Mesin"
+  ],
+  "start": "2017-08-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1141",
+  "email": "mahendra.siregar@sgn.example",
+  "name": "Mahendra Siregar",
+  "nik": "3572161110720141",
+  "birth": "1972-10-11",
+  "position": "PTSGN-POS-GLEN-AKU-MGR",
+  "unit": "PTSGN-GLEN-AKU",
+  "head": true,
+  "parent": "PTSGN-POS-GLEN-GM",
+  "fn": "Administrasi Umum",
+  "edu": [
+   "S1",
+   "Akuntansi"
+  ],
+  "start": "2021-03-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1142",
+  "email": "sari.harahap@sgn.example",
+  "name": "Sari Harahap",
+  "nik": "3508105204810142",
+  "birth": "1981-04-12",
+  "position": "PTSGN-POS-KB-JT4-1-MGR",
+  "unit": "PTSGN-KB-JT4-1",
+  "head": true,
+  "parent": "PTSGN-POS-JT4-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2020-01-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1143",
+  "email": "arief.syahputra@sgn.example",
+  "name": "Arief Syahputra",
+  "nik": "3505100210720143",
+  "birth": "1972-10-02",
+  "position": "PTSGN-POS-KB-JT4-2-MGR",
+  "unit": "PTSGN-KB-JT4-2",
+  "head": true,
+  "parent": "PTSGN-POS-JT4-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2017-03-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1144",
+  "email": "danu.syahputra@sgn.example",
+  "name": "Danu Syahputra",
+  "nik": "3574222501720144",
+  "birth": "1972-01-25",
+  "position": "PTSGN-POS-KB-JT4-3-MGR",
+  "unit": "PTSGN-KB-JT4-3",
+  "head": true,
+  "parent": "PTSGN-POS-JT4-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2017-06-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1145",
+  "email": "fatmawati.mulyadi@sgn.example",
+  "name": "Fatmawati Mulyadi",
+  "nik": "7374185908690145",
+  "birth": "1969-08-19",
+  "position": "PTSGN-POS-SUL-HEAD",
+  "unit": "PTSGN-CL-SUL",
+  "head": true,
+  "parent": "PTSGN-POS-DIRTEKOPS",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2025-03-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1146",
+  "email": "nurhaliza.febrianti@sgn.example",
+  "name": "Nurhaliza Febrianti",
+  "nik": "7307136301720146",
+  "birth": "1972-01-23",
+  "position": "PTSGN-POS-BONE-GM",
+  "unit": "PTSGN-PG-BONE",
+  "head": true,
+  "parent": "PTSGN-POS-SUL-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2015-06-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1147",
+  "email": "baso.hidayat@sgn.example",
+  "name": "Baso Hidayat",
+  "nik": "7372211704700147",
+  "birth": "1970-04-17",
+  "position": "PTSGN-POS-CAMM-GM",
+  "unit": "PTSGN-PG-CAMM",
+  "head": true,
+  "parent": "PTSGN-POS-SUL-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2017-07-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1148",
+  "email": "andinurul.suryanto@sgn.example",
+  "name": "Andi Nurul Suryanto",
+  "nik": "7372245810710148",
+  "birth": "1971-10-18",
+  "position": "PTSGN-POS-TAKA-GM",
+  "unit": "PTSGN-PG-TAKA",
+  "head": true,
+  "parent": "PTSGN-POS-SUL-HEAD",
+  "fn": "Manajemen Eksekutif",
+  "edu": [
+   "S1",
+   "Teknik Kimia"
+  ],
+  "start": "2025-10-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1149",
+  "email": "hasniah.kurniawan@sgn.example",
+  "name": "Hasniah Kurniawan",
+  "nik": "7308195905710149",
+  "birth": "1971-05-19",
+  "position": "PTSGN-POS-KB-SUL-1-MGR",
+  "unit": "PTSGN-KB-SUL-1",
+  "head": true,
+  "parent": "PTSGN-POS-SUL-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2015-04-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1150",
+  "email": "hasniah.setiawan@sgn.example",
+  "name": "Hasniah Setiawan",
+  "nik": "7371166508760150",
+  "birth": "1976-08-25",
+  "position": "PTSGN-POS-KB-SUL-2-MGR",
+  "unit": "PTSGN-KB-SUL-2",
+  "head": true,
+  "parent": "PTSGN-POS-SUL-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2018-02-01",
+  "gender": "F"
+ },
+ {
+  "employee_number": "PTSGN-1151",
+  "email": "yusuf.sulistyo@sgn.example",
+  "name": "Yusuf Sulistyo",
+  "nik": "7372221103780151",
+  "birth": "1978-03-11",
+  "position": "PTSGN-POS-KB-SUL-3-MGR",
+  "unit": "PTSGN-KB-SUL-3",
+  "head": true,
+  "parent": "PTSGN-POS-SUL-HEAD",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Agronomi"
+  ],
+  "start": "2019-10-01",
+  "gender": "M"
+ },
+ {
+  "employee_number": "PTSGN-1152",
+  "email": "indah.wibowo@sgn.example",
+  "name": "Indah Wibowo",
+  "nik": "3571084211710152",
+  "birth": "1971-11-02",
+  "position": "PTSGN-POS-KADIV-LITBANG",
+  "unit": "PTSGN-DIV-LITBANG",
+  "head": true,
+  "parent": "PTSGN-POS-DIRTEKOPS",
+  "fn": "Produksi",
+  "edu": [
+   "S2",
+   "Agronomi"
+  ],
+  "start": "2014-10-01",
+  "gender": "F",
+  "late": true
+ },
+ {
+  "employee_number": "PTSGN-1153",
+  "email": "krisna.puspitasari@sgn.example",
+  "name": "Krisna Puspitasari",
+  "nik": "3505020202950153",
+  "birth": "1995-02-02",
+  "position": "PTSGN-POS-STAF-LITBANG-01",
+  "unit": "PTSGN-DIV-LITBANG",
+  "head": false,
+  "parent": "PTSGN-POS-KADIV-LITBANG",
+  "fn": "Produksi",
+  "edu": [
+   "S1",
+   "Bioteknologi"
+  ],
+  "start": "2015-05-01",
+  "gender": "M",
+  "late": true
+ }
+]

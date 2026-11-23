@@ -1,0 +1,85 @@
+# Shown in Prometheus and Grafana only; no notification channel yet.
+groups:
+  - name: sgn-services
+    rules:
+      - alert: ServiceDown
+        expr: up{job=~"iam|hr|hr-worker|lms|lms-worker|directory|postgres|node"} == 0
+        for: 2m
+        labels: { severity: critical }
+        annotations:
+          summary: '{{ $labels.job }} tidak bisa di-scrape selama 2 menit'
+      - alert: HighErrorRate
+        expr: |
+          (
+            sum by (job) (rate(http_requests_total{code=~"5.."}[5m]))
+              / sum by (job) (rate(http_requests_total[5m]))
+          ) > 0.05
+          and sum by (job) (rate(http_requests_total[5m])) > 0.1
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: '{{ $labels.job }}: {{ $value | humanizePercentage }} request berakhir 5xx'
+      - alert: SlowRequests
+        expr: |
+          histogram_quantile(0.95,
+            sum by (job, le) (rate(http_request_duration_seconds_bucket{route!~".*export.*"}[5m]))
+          ) > 1
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: '{{ $labels.job }}: p95 latensi {{ $value | humanizeDuration }}'
+      - alert: LoginFailureSpike
+        expr: |
+          sum(rate(http_requests_total{job="iam", route="POST /api/iam/v1/auth/login", code=~"401|429"}[5m])) * 60 > 30
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: 'Login gagal {{ $value | humanize }}/menit; kemungkinan tebak password'
+      - alert: DBPoolSaturated
+        expr: pgxpool_acquired_conns / pgxpool_max_conns > 0.9
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: '{{ $labels.job }}: pool koneksi DB {{ $value | humanizePercentage }} terpakai'
+
+  - name: sgn-workers
+    rules:
+      - alert: WorkerJobFailing
+        expr: increase(worker_job_runs_total{result="error"}[30m]) > 0
+        labels: { severity: warning }
+        annotations:
+          summary: '{{ $labels.job }}: job {{ $labels.task }} gagal dalam 30 menit terakhir (lihat log)'
+      - alert: IAMSyncStale
+        expr: time() - worker_job_last_success_timestamp_seconds{task="iam_sync"} > 3 * 3600
+        labels: { severity: warning }
+        annotations:
+          summary: '{{ $labels.job }}: sync IAM terakhir berhasil {{ $value | humanizeDuration }} lalu'
+      - alert: AssignmentQueueStuck
+        expr: lms_assignment_job_oldest_queued_seconds > 600
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: 'Job penugasan LMS menunggu {{ $value | humanizeDuration }}'
+
+  - name: sgn-infra
+    rules:
+      - alert: PostgresDown
+        expr: pg_up == 0
+        for: 1m
+        labels: { severity: critical }
+        annotations:
+          summary: 'Postgres tidak menjawab'
+      - alert: PostgresConnectionsHigh
+        expr: sum(pg_stat_activity_count) / max(pg_settings_max_connections) > 0.8
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: 'Koneksi Postgres {{ $value | humanizePercentage }} dari batas'
+      - alert: DiskAlmostFull
+        expr: |
+          node_filesystem_avail_bytes{fstype=~"ext[234]|xfs|btrfs|zfs", mountpoint!~"/boot.*"}
+            / node_filesystem_size_bytes{fstype=~"ext[234]|xfs|btrfs|zfs", mountpoint!~"/boot.*"} < 0.15
+        for: 10m
+        labels: { severity: critical }
+        annotations:
+          summary: 'Disk {{ $labels.mountpoint }} tinggal {{ $value | humanizePercentage }}'

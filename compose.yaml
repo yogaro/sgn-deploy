@@ -1,0 +1,281 @@
+# Full SGN stack. Build context is this folder: each service's go.mod/package.json points at ../ contracts.
+# First run: see docker/README.md (copy .env.example to .env, create the IAM signing key).
+name: sgn
+
+x-db: &db
+  POSTGRES_USER: ${POSTGRES_USER:-sgn}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+
+x-iam-env: &iam-env
+  DATABASE_URL: postgres://${POSTGRES_USER:-sgn}:${POSTGRES_PASSWORD}@postgres:5432/db_iam?sslmode=disable
+
+x-hr-env: &hr-env
+  DATABASE_URL: postgres://${POSTGRES_USER:-sgn}:${POSTGRES_PASSWORD}@postgres:5432/db_hr?sslmode=disable
+  IAM_BASE_URL: http://iam:8081
+  IAM_CLIENT_ID: ${HR_IAM_CLIENT_ID:-}
+  IAM_CLIENT_SECRET: ${HR_IAM_CLIENT_SECRET:-}
+  IAM_SYNC_INTERVAL: ${HR_IAM_SYNC_INTERVAL:-1h}
+  ALLOWED_ORIGIN: http://localhost:${PORTAL_PORT:-3000}
+  STORAGE_DIR: /data/storage
+  METRICS_ADDR: ':9091'
+
+x-lms-env: &lms-env
+  DATABASE_URL: postgres://${POSTGRES_USER:-sgn}:${POSTGRES_PASSWORD}@postgres:5432/db_lms?sslmode=disable
+  IAM_BASE_URL: http://iam:8081
+  IAM_CLIENT_ID: ${LMS_IAM_CLIENT_ID:-}
+  IAM_CLIENT_SECRET: ${LMS_IAM_CLIENT_SECRET:-}
+  IAM_SYNC_INTERVAL: ${LMS_IAM_SYNC_INTERVAL:-1h}
+  ALLOWED_ORIGIN: http://localhost:${PORTAL_PORT:-3000}
+  S3_ENDPOINT: http://s3:9000
+  # Signed URLs carry this address, so it must be the one people open the Portal at.
+  S3_PUBLIC_URL: ${LMS_PUBLIC_URL:-http://localhost:3003}
+  S3_BUCKET: lms-files
+  S3_ACCESS_KEY: ${S3_ACCESS_KEY:?set S3_ACCESS_KEY in .env}
+  S3_SECRET_KEY: ${S3_SECRET_KEY:?set S3_SECRET_KEY in .env}
+  METRICS_ADDR: ':9091'
+
+# Only iam, hr, and lms build their image; the migrate jobs and the workers reuse it.
+x-iam-image: &iam-image
+  image: sgn-iam-service
+  pull_policy: never
+
+x-hr-image: &hr-image
+  image: sgn-hr-service
+  pull_policy: never
+
+x-lms-image: &lms-image
+  image: sgn-lms-service
+  pull_policy: never
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      <<: *db
+      POSTGRES_DB: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/initdb:/docker-entrypoint-initdb.d:ro
+      - ./sgn-directory-service/migrations:/migrations/directory:ro
+    ports: ['127.0.0.1:${POSTGRES_PORT:-55432}:5432']
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d db_directory']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  iam-migrate:
+    <<: *iam-image
+    command: ['migrate']
+    environment: *iam-env
+    healthcheck: { disable: true }
+    depends_on: { postgres: { condition: service_healthy } }
+
+  iam:
+    image: sgn-iam-service
+    build: { context: ., dockerfile: sgn-iam-service/Dockerfile }
+    environment:
+      <<: *iam-env
+      ALLOWED_ORIGIN: http://localhost:${PORTAL_PORT:-3000}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      SIGNING_KEY_PATH: /run/secrets/iam_signing_key
+      SIGNING_KEY_ID: ${IAM_SIGNING_KEY_ID:-1}
+      DIRECTORY_INTERNAL_URL: http://directory:8080
+      DIRECTORY_SERVICE_KEY: ${DIRECTORY_SERVICE_KEY:-}
+      METRICS_ADDR: ':9091'
+    secrets: [iam_signing_key]
+    ports: ['${IAM_PORT:-8081}:8081']
+    restart: unless-stopped
+    depends_on: { iam-migrate: { condition: service_completed_successfully } }
+
+  hr-migrate:
+    <<: *hr-image
+    command: ['migrate']
+    environment: *hr-env
+    healthcheck: { disable: true }
+    depends_on: { postgres: { condition: service_healthy } }
+
+  hr:
+    image: sgn-hr-service
+    build: { context: ., dockerfile: sgn-hr-service/Dockerfile }
+    environment: *hr-env
+    volumes: ['hr-storage:/data/storage']
+    ports: ['${HR_PORT:-8082}:8082']
+    restart: unless-stopped
+    depends_on:
+      hr-migrate: { condition: service_completed_successfully }
+      iam: { condition: service_healthy }
+
+  hr-worker:
+    <<: *hr-image
+    command: ['worker']
+    environment: *hr-env
+    volumes: ['hr-storage:/data/storage']
+    healthcheck: { disable: true }
+    restart: unless-stopped
+    depends_on:
+      hr-migrate: { condition: service_completed_successfully }
+      iam: { condition: service_healthy }
+
+  s3:
+    image: rustfs/rustfs:latest
+    environment:
+      RUSTFS_ACCESS_KEY: ${S3_ACCESS_KEY:?set S3_ACCESS_KEY in .env}
+      RUSTFS_SECRET_KEY: ${S3_SECRET_KEY:?set S3_SECRET_KEY in .env}
+    volumes: ['s3-data:/data']
+    restart: unless-stopped
+
+  lms-migrate:
+    <<: *lms-image
+    command: ['migrate']
+    environment: *lms-env
+    healthcheck: { disable: true }
+    depends_on: { postgres: { condition: service_healthy } }
+
+  lms:
+    image: sgn-lms-service
+    build: { context: ., dockerfile: sgn-lms-service/Dockerfile }
+    environment: *lms-env
+    ports: ['${LMS_PORT:-8083}:8083']
+    restart: unless-stopped
+    depends_on:
+      lms-migrate: { condition: service_completed_successfully }
+      iam: { condition: service_healthy }
+      s3: { condition: service_started }
+
+  lms-worker:
+    <<: *lms-image
+    command: ['worker']
+    environment: *lms-env
+    healthcheck: { disable: true }
+    restart: unless-stopped
+    depends_on:
+      lms-migrate: { condition: service_completed_successfully }
+      iam: { condition: service_healthy }
+      s3: { condition: service_started }
+
+  directory:
+    image: sgn-directory-service
+    build: { context: ., dockerfile: sgn-directory-service/Dockerfile }
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-sgn}:${POSTGRES_PASSWORD}@postgres:5432/db_directory?sslmode=disable
+      ALLOWED_ORIGIN: http://localhost:${DIRECTORY_FE_PORT:-3001}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      METRICS_ADDR: ':9091'
+    ports: ['${DIRECTORY_PORT:-8080}:8080']
+    restart: unless-stopped
+    depends_on: { postgres: { condition: service_healthy } }
+
+  lms-fe:
+    image: sgn-lms-fe
+    build: { context: ./sgn-lms-fe }
+    ports: ['${LMS_WEB_PORT:-3003}:80']
+    restart: unless-stopped
+    depends_on:
+      iam: { condition: service_healthy }
+      lms: { condition: service_healthy }
+      s3: { condition: service_started }
+
+  portal:
+    image: sgn-portal
+    build: { context: ., dockerfile: sgn-portal/Dockerfile }
+    ports: ['${PORTAL_PORT:-3000}:80']
+    restart: unless-stopped
+    depends_on:
+      iam: { condition: service_healthy }
+      hr: { condition: service_healthy }
+
+  directory-fe:
+    image: sgn-directory-fe
+    build:
+      context: .
+      dockerfile: sgn-directory-fe/Dockerfile
+      args:
+        VITE_DIRECTORY_SERVICE_URL: http://localhost:${DIRECTORY_PORT:-8080}
+    ports: ['${DIRECTORY_FE_PORT:-3001}:80']
+    restart: unless-stopped
+    depends_on: { directory: { condition: service_healthy } }
+
+  # Monitoring (docker compose --profile monitoring up -d); see docker/README.md.
+  prometheus:
+    image: prom/prometheus:v3.5.0
+    profiles: [monitoring]
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+    volumes:
+      - ./docker/monitoring/prometheus:/etc/prometheus:ro
+      - prometheus-data:/prometheus
+    ports: ['127.0.0.1:${PROMETHEUS_PORT:-9090}:9090']
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:3.5.5
+    profiles: [monitoring]
+    command: ['-config.file=/etc/loki/config.yaml']
+    volumes:
+      - ./docker/monitoring/loki/config.yaml:/etc/loki/config.yaml:ro
+      - loki-data:/loki
+    restart: unless-stopped
+
+  alloy:
+    image: grafana/alloy:v1.10.2
+    profiles: [monitoring]
+    command: ['run', '--storage.path=/var/lib/alloy/data', '/etc/alloy/config.alloy']
+    volumes:
+      - ./docker/monitoring/alloy/config.alloy:/etc/alloy/config.alloy:ro
+      # Read-only, but the socket still grants control of Docker; see docker/README.md.
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    depends_on: [loki]
+
+  grafana:
+    image: grafana/grafana:12.1.1
+    profiles: [monitoring]
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-}
+      GF_AUTH_ANONYMOUS_ENABLED: 'false'
+      GF_USERS_ALLOW_SIGN_UP: 'false'
+      GF_ANALYTICS_REPORTING_ENABLED: 'false'
+      GF_ANALYTICS_CHECK_FOR_UPDATES: 'false'
+      GF_NEWS_NEWS_FEED_ENABLED: 'false'
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/dashboards/layanan.json
+    volumes:
+      - ./docker/monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./docker/monitoring/grafana/dashboards:/etc/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports: ['127.0.0.1:${GRAFANA_PORT:-3002}:3000']
+    restart: unless-stopped
+    depends_on: [prometheus, loki]
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.17.1
+    profiles: [monitoring]
+    environment:
+      DATA_SOURCE_URI: postgres:5432/postgres?sslmode=disable
+      DATA_SOURCE_USER: ${POSTGRES_USER:-sgn}
+      DATA_SOURCE_PASS: ${POSTGRES_PASSWORD}
+    restart: unless-stopped
+    depends_on: { postgres: { condition: service_healthy } }
+
+  node-exporter:
+    image: prom/node-exporter:v1.9.1
+    profiles: [monitoring]
+    command: ['--path.rootfs=/host']
+    volumes: ['/:/host:ro']
+    pid: host
+    restart: unless-stopped
+
+secrets:
+  iam_signing_key:
+    file: ${IAM_SIGNING_KEY_FILE:-./docker/secrets/iam-signing-key.txt}
+
+volumes:
+  pgdata:
+  hr-storage:
+  s3-data:
+  prometheus-data:
+  loki-data:
+  grafana-data:
