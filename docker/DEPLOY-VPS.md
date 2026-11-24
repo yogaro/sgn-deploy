@@ -18,8 +18,30 @@ Portal dan LMS sengaja satu origin, karena cookie refresh IAM `SameSite=Strict` 
 
 - Ubuntu 22.04/24.04, x86_64, minimal 2 vCPU / 4 GB RAM (disarankan 8 GB; build Go + Vite memuncak sekitar 4 GB),
   disk minimal 60 GB.
-- Record A `SGN_DOMAIN` dan `DIRECTORY_DOMAIN` → host; port 80/443 terbuka di firewall penyedia.
+- Record A `SGN_DOMAIN` dan `DIRECTORY_DOMAIN` → host, **sudah resolve sebelum `vps-bootstrap.sh`** (Caddy langsung
+  meminta sertifikat); port 80/443 terbuka di firewall penyedia.
 - Akses baca dari host ke `yogaro/*` (kunci SSH atau credential helper HTTPS).
+
+## Struktur folder
+
+Hanya `sgn-deploy` yang di-clone manual. `docker/clone-repos.sh` meng-clone 11 repo lain **ke dalamnya**, dengan nama
+folder yang dirujuk compose, `go.mod` (`replace ../`), dan `package.json` (`file:../`). Folder `sgn-*` di-ignore
+`sgn-deploy`.
+
+```
+/opt/sgn                     sgn-deploy
+├── sgn-iam-service          sgn-iam-be
+├── sgn-iam-contracts        sgn-iam-contracts
+├── sgn-hr-service           sgn-hr-be
+├── sgn-hr-contracts         sgn-hr-contracts
+├── sgn-lms-service          sgn-lms-be
+├── sgn-lms-fe               sgn-lms-fe
+├── sgn-lms-contracts        sgn-lms-contracts
+├── sgn-directory-service    sgn-directory-be
+├── sgn-directory-fe         sgn-directory-fe
+├── sgn-directory-contracts  sgn-directory-contracts
+└── sgn-portal               sgn-portal-fe
+```
 
 ## File
 
@@ -56,7 +78,7 @@ Kalau build gagal karena timeout jaringan (`go mod download`, `npm ci`), jalanka
 
 ## Seed (FORMASI + modul piloting)
 
-Tidak ada di git; salin dari mesin yang menyimpannya:
+Tidak ada di git; salin dari mesin yang menyimpannya (dijalankan dari root workspace di mesin itu):
 
 ```bash
 rsync -az seed/data/private/ HOST:/opt/sgn/seed/data/private/   # formasi.json, people.json, positions.json
@@ -66,7 +88,10 @@ scp "Trailer Sugartime.mp4"  HOST:/opt/sgn/                     # video banner h
 
 ```bash
 SEED_PASSWORD='…' SEED_MUST_CHANGE=1 seed/run.sh --formasi
+docker compose restart hr-worker    # HR sinkron IAM saat worker start; tanpa ini data karyawan HR menunggu sampai 1 jam
 ```
+
+Urutan seed: Directory (SQL) → `iam sync --full` → peran dan sandi IAM → sinkron LMS → media → data LMS → banner.
 
 - Setiap karyawan FORMASI dan `DEMO-*-01` mendapat `SEED_PASSWORD` dengan `must_change_password=true`.
 - `ADMIN-LMS` mendapat sandi yang sama dengan `must_change_password=false`, karena seed masuk memakai akun ini.
@@ -75,10 +100,31 @@ SEED_PASSWORD='…' SEED_MUST_CHANGE=1 seed/run.sh --formasi
 - `--formasi` membangun ulang tabel domain LMS (`01_reset_lms_domain.sql`). Jangan jalankan ulang setelah piloting
   punya data.
 
+## Verifikasi
+
+- `docker compose ps`: semua layanan `healthy`, `*-migrate` `exited (0)`.
+- `https://${SGN_DOMAIN}/lms/`: masuk sebagai `ADMIN-LMS`; buka satu kursus PDF/video (menguji `S3_PUBLIC_URL` + `Host`).
+- Masuk dengan NIK karyawan + `SEED_PASSWORD`: harus diminta ganti sandi.
+- `https://${SGN_DOMAIN}/`: masuk Portal dengan akun `createadmin`; unggah satu lampiran cuti (menguji bucket `hr-files`).
+- `https://${DIRECTORY_DOMAIN}/`: masuk dengan akun `createuser`.
+- `docker/backup.sh` sekali; periksa isi `backups/<tanggal>/`.
+
+## Masalah umum
+
+| Gejala | Penyebab / tindakan |
+| --- | --- |
+| Sertifikat tidak terbit | `docker compose logs caddy`; DNS belum mengarah ke host, atau 80/443 diblokir firewall penyedia. |
+| Build gagal `TLS handshake timeout` | Jaringan saat `go mod download`/`npm ci`; jalankan ulang `vps-bootstrap.sh` / `docker compose build`. |
+| `permission denied` ke Docker socket | User baru masuk grup `docker` oleh `vps-setup.sh`; logout lalu login lagi. |
+| Login LMS gagal `CORS`/origin | `SGN_DOMAIN` di `.env` beda dengan alamat yang dibuka; perbaiki lalu `docker compose up -d`. |
+| Media 403 `SignatureDoesNotMatch` | `LMS_PUBLIC_URL` ≠ `https://${SGN_DOMAIN}`, atau proxy di depan Caddy mengubah `Host`. |
+| HR kosong setelah seed | `docker compose restart hr-worker`. |
+
 ## Pembaruan
 
 ```bash
-git pull && docker/clone-repos.sh
+cd /opt/sgn
+git pull && docker/clone-repos.sh   # clone-repos.sh = git pull --ff-only untuk repo yang sudah ada
 docker compose up -d --build        # *-migrate jalan sebelum layanannya (depends_on: service_completed_successfully)
 docker image prune -f
 ```
