@@ -2,7 +2,7 @@
 
 Untuk panel yang men-deploy "stack" compose dari image jadi (tanpa build, tanpa file repo). Image dibangun GitHub Actions
 `sgn-deploy` dan disimpan di GitHub Container Registry (privat). Kalau server bisa diakses SSH dan boleh build sendiri,
-`DEPLOY-VPS.md` lebih sederhana.
+`DEPLOY-VPS.md` lebih sederhana. RunCloud Docker Stacks (wizard per container, tanpa impor compose): `DEPLOY-RUNCLOUD.md`.
 
 ```
 GitHub Actions (images.yml) ──push──▶ ghcr.io/yogaro/sgn-*:latest, :run-<n>

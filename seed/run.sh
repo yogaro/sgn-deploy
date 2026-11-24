@@ -11,7 +11,12 @@
 #                     seed signs in as it.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-psql() { docker compose exec -T postgres psql -U sgn -v ON_ERROR_STOP=1 -q "$@"; }
+# Docker Stacks (RunCloud) have no compose project: SEED_PG_CONTAINER / SEED_IAM_CONTAINER name the running containers.
+pg_exec() {
+  if [[ -n "${SEED_PG_CONTAINER:-}" ]]; then docker exec -i "$SEED_PG_CONTAINER" psql -U sgn "$@"
+  else docker compose exec -T postgres psql -U sgn "$@"; fi
+}
+psql() { pg_exec -v ON_ERROR_STOP=1 -q "$@"; }
 FORMASI=""; ASSETS=""
 for a in "$@"; do [[ "$a" == "--formasi" ]] && FORMASI=1; [[ "$a" == "--assets" ]] && ASSETS=1; done
 if [[ -n "${SEED_MUST_CHANGE:-}" && -z "${SEED_PASSWORD:-}" ]]; then
@@ -21,7 +26,7 @@ export DEMO_PASSWORD=${SEED_PASSWORD:-Demo#Sgn2026}
 export LMS_BASE=${LMS_BASE:-http://127.0.0.1:${LMS_WEB_PORT:-3003}}
 # bcrypt hash of the password, made by pgcrypto inside the Postgres container (the scratch "postgres" database).
 export SEED_PASSWORD_HASH=$(echo "CREATE EXTENSION IF NOT EXISTS pgcrypto; SELECT crypt(:'pw', gen_salt('bf', 12));" |
-  docker compose exec -T postgres psql -U sgn -d postgres -v ON_ERROR_STOP=1 -qtA -v pw="$DEMO_PASSWORD" | tail -1)
+  pg_exec -d postgres -v ON_ERROR_STOP=1 -qtA -v pw="$DEMO_PASSWORD" | tail -1)
 # The L&D admin the scripts sign in as: a real one with --formasi (Staf Pendidikan & Pelatihan), else the made-up Arief.
 export SEED_ADMIN_EMAIL=$([[ -n "$FORMASI" ]] && echo "admin.lms@sgn.example" || echo "arief.nasution@sgn.example")
 # The sign-in name of that admin (fiktif seed: set SEED_ADMIN_LOGIN to the NIK of the employee above).
@@ -35,7 +40,8 @@ echo "1/7 Directory"
 if [[ -n "$FORMASI" ]]; then node seed/gen/directory-formasi.mjs; else node seed/gen/directory.mjs; fi
 psql -d db_directory < seed/sql/10_directory.sql
 echo "2/7 IAM sync"
-docker compose run --rm iam sync --full
+if [[ -n "${SEED_IAM_CONTAINER:-}" ]]; then docker exec "$SEED_IAM_CONTAINER" sgn-start run sync --full
+else docker compose run --rm iam sync --full; fi
 echo "3/7 IAM roles and demo password"
 if [[ -n "$FORMASI" ]]; then node seed/gen/iam-formasi.mjs; else node seed/gen/iam.mjs; fi
 psql -d db_iam < seed/sql/20_iam_roles.sql
