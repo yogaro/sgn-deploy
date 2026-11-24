@@ -1,180 +1,105 @@
-# Deploy ke VPS
+# Deploy VPS
 
-Seluruh sistem (Portal, SUGARLedge/LMS, Directory, IAM, HR) berjalan di **satu VPS** dengan Docker Compose. Caddy di depan
-mengurus HTTPS (sertifikat Let's Encrypt otomatis). Selain SSH, hanya port 80/443 yang terbuka.
+Single host, Docker Compose (`compose.yaml` + `compose.prod.yaml`). Caddy terminates TLS (ACME HTTP-01); no other port
+is published publicly.
 
 ```
-Internet ──443──▶ caddy ─┬─ SGN_DOMAIN/            ▶ portal   (nginx: /api/iam → iam, /api/hr → hr)
-                         ├─ SGN_DOMAIN/lms/        ▶ lms-fe   (nginx: /api/iam → iam, /api/lms → lms, /lms-files → s3)
-                         ├─ DIRECTORY_DOMAIN/      ▶ directory-fe
-                         └─ DIRECTORY_DOMAIN/api/  ▶ directory
-          internal saja: postgres, s3 (RustFS), iam, hr, hr-worker, lms, lms-worker
+:443 caddy ─┬─ ${SGN_DOMAIN}/                                  → portal:80   (/api/iam → iam:8081, /api/hr → hr:8082)
+            ├─ ${SGN_DOMAIN}/{lms,api/lms,lms-files}/*         → lms-fe:80   (/api/iam → iam, /api/lms → lms:8083, /lms-files → s3:9000)
+            ├─ ${DIRECTORY_DOMAIN}/api/* (prefix stripped)     → directory:8080
+            └─ ${DIRECTORY_DOMAIN}/*                           → directory-fe:80
+internal: postgres:5432 (db_iam, db_hr, db_lms, db_directory), s3 (RustFS), hr-worker, lms-worker, *-migrate
+loopback: lms-fe 127.0.0.1:3003 (seed), postgres 127.0.0.1:55432
 ```
 
-File yang dipakai:
+Portal and LMS share one origin on purpose: IAM's refresh cookie is `SameSite=Strict`, `Path=/api/iam/v1/auth`.
 
-| File | Fungsi |
+## Requirements
+
+- Ubuntu 22.04/24.04, x86_64, ≥ 2 vCPU / 4 GB RAM (8 GB recommended; builds of Go + Vite peak around 4 GB), ≥ 60 GB disk.
+- A records for `SGN_DOMAIN` and `DIRECTORY_DOMAIN` → the host; 80/443 open in the provider firewall.
+- Read access from the host to `yogaro/*` (SSH key or HTTPS credential helper).
+
+## Files
+
+| File | Purpose |
 | --- | --- |
-| `compose.yaml` + `compose.prod.yaml` | layanan, plus override server: Caddy, origin HTTPS, port aplikasi ditutup |
-| `docker/caddy/Caddyfile` | rute domain |
-| `docker/vps-setup.sh` | memasang Docker, Node 22, firewall, dan swap di Ubuntu baru |
-| `docker/clone-repos.sh` | clone/pull 11 repo aplikasi ke nama folder yang benar |
-| `docker/vps-bootstrap.sh` | membuat `.env` dengan rahasia acak, kunci IAM, build, klien layanan, lalu menyalakan semua |
-| `docker/backup.sh` | backup database + object store |
-| `seed/run.sh` | memuat data karyawan asli + modul piloting |
+| `compose.prod.yaml` | `caddy` service; `ports: !reset` on app services; `ALLOWED_ORIGIN`/`S3_PUBLIC_URL` = `https://${SGN_DOMAIN}`; `COOKIE_SECURE=true`; `VITE_DIRECTORY_SERVICE_URL=https://${DIRECTORY_DOMAIN}/api` (build arg). Needs Compose ≥ 2.24.4. |
+| `docker/caddy/Caddyfile` | Routes above; 600 MB body limit and unbuffered proxy for LMS media. |
+| `docker/vps-setup.sh` | Docker (get.docker.com), Node 22 (NodeSource), 4 GB swap when RAM < 8 GB, ufw 22/80/443. |
+| `docker/clone-repos.sh` | Clones/pulls the 11 app repos into the folder names compose expects. `GIT_BASE`, `BRANCH`. |
+| `docker/vps-bootstrap.sh` | Writes `.env`, signing key, builds, creates service clients, starts everything. Idempotent. |
+| `docker/backup.sh` | `pg_dump -Fc` ×4, tar of `sgn_s3-data`, `.env`, signing key → `backups/<date>/`, keeps `KEEP_DAYS` (14). |
 
-## 1. Siapkan VPS dan domain
-
-**Penyedia bebas** (IDCloudHost, Biznet Gio, DigitalOcean, Vultr, AWS Lightsail, dan lain-lain), asal Ubuntu 22.04/24.04,
-punya IP publik, dan akses root lewat SSH. Untuk karyawan di Indonesia, pilih data center Jakarta/Singapura.
-
-| | Minimum (piloting) | Disarankan |
-| --- | --- | --- |
-| CPU | 2 vCPU | 4 vCPU |
-| RAM | 4 GB (+ swap 4 GB, dipasang otomatis) | 8 GB |
-| Disk | 60 GB SSD | 100 GB SSD atau lebih (video kursus bisa sampai 600 MB per berkas) |
-
-**DNS:** buat dua record A ke IP VPS, misalnya:
-
-| Nama | Isi |
-| --- | --- |
-| `sgn.contoh.co.id` (`SGN_DOMAIN`) | Portal di `/`, SUGARLedge di `/lms/` |
-| `directory.contoh.co.id` (`DIRECTORY_DOMAIN`) | Directory |
-
-**Belum punya domain?** Pakai sslip.io, yang memetakan nama ke IP tanpa perlu mendaftar. Untuk IP `103.10.20.30`:
-`SGN_DOMAIN=103-10-20-30.sslip.io` dan `DIRECTORY_DOMAIN=directory.103-10-20-30.sslip.io`. HTTPS tetap jalan, tetapi
-ini hanya cocok untuk uji coba. Untuk piloting ke karyawan, pakai domain perusahaan.
-
-## 2. Pasang Docker dan alat dasar
+## Install
 
 ```bash
-ssh root@IP_VPS
-git clone git@github.com:yogaro/sgn-deploy.git /opt/sgn      # atau https://github.com/yogaro/sgn-deploy.git
-cd /opt/sgn
-bash docker/vps-setup.sh
+git clone git@github.com:yogaro/sgn-deploy.git /opt/sgn && cd /opt/sgn
+sudo bash docker/vps-setup.sh
+docker/clone-repos.sh
+SGN_DOMAIN=sgn.example.co.id DIRECTORY_DOMAIN=directory.example.co.id docker/vps-bootstrap.sh
+docker compose run --rm iam createadmin          # IAM SUPERADMIN (Portal + LMS)
+docker compose run --rm directory createuser     # Directory FE login
 ```
 
-Repo bersifat privat, jadi VPS perlu akses baca. Cara paling mudah: buat kunci SSH di VPS (`ssh-keygen -t ed25519`) lalu
-tambahkan `~/.ssh/id_ed25519.pub` ke akun GitHub yang punya akses ke repo `yogaro/*`.
+`vps-bootstrap.sh` sets in `.env`:
+- `COMPOSE_FILE=compose.yaml:compose.prod.yaml`, so plain `docker compose` uses the overlay;
+- `COOKIE_SECURE=true` and `LMS_PUBLIC_URL`;
+- random `POSTGRES_PASSWORD`, `S3_ACCESS_KEY`/`S3_SECRET_KEY`, and `GRAFANA_ADMIN_PASSWORD`, only where empty;
+- the service-client credentials, by piping the prompts of `createserviceclient`:
+  - `DIRECTORY_SERVICE_KEY` (IAM → Directory);
+  - `HR_IAM_CLIENT_ID`/`SECRET` and `LMS_IAM_CLIENT_ID`/`SECRET` (scope `iam.employees.read,iam.org.read`).
 
-## 3. Ambil kode semua aplikasi
+It also writes `docker/secrets/iam-signing-key.txt` (`genkey`) when that file is missing. Existing values are kept.
+
+## Seed (FORMASI + pilot modules)
+
+Not in git; copy from a machine that has them:
 
 ```bash
-docker/clone-repos.sh                    # 11 repo masuk ke sgn-iam-service, sgn-lms-fe, dst.
+rsync -az seed/data/private/ HOST:/opt/sgn/seed/data/private/   # formasi.json, people.json, positions.json
+rsync -az seed/assets/       HOST:/opt/sgn/seed/assets/         # ~275 MB, includes media.json and piloting PDFs
+scp "Trailer Sugartime.mp4"  HOST:/opt/sgn/                     # login banner video
 ```
 
-## 4. Nyalakan semua layanan
-
 ```bash
-SGN_DOMAIN=sgn.contoh.co.id DIRECTORY_DOMAIN=directory.contoh.co.id docker/vps-bootstrap.sh
+SEED_PASSWORD='…' SEED_MUST_CHANGE=1 seed/run.sh --formasi
 ```
 
-Skrip ini:
+- Every FORMASI employee and `DEMO-*-01` gets `SEED_PASSWORD` with `must_change_password=true`.
+- `ADMIN-LMS` gets the same password with `must_change_password=false`, because the seed signs in with it.
+- The bcrypt hash comes from pgcrypto in the postgres container.
+- `SEED_MUST_CHANGE` without `SEED_PASSWORD` is refused, because the default `Demo#Sgn2026` is in the repo.
+- `--formasi` rebuilds the LMS domain tables (`01_reset_lms_domain.sql`). Do not rerun it once the pilot has data.
 
-- membuat `.env` (izin 600) dengan sandi Postgres, kunci S3, dan sandi Grafana acak;
-- mengisi `COMPOSE_FILE=compose.yaml:compose.prod.yaml`, sehingga setiap `docker compose …` berikutnya otomatis memakai
-  setelan server;
-- membuat kunci tanda tangan IAM;
-- membuat tiga klien layanan dan menyimpannya di `.env`: kunci IAM → Directory, klien HR → IAM, dan klien LMS → IAM;
-- menyalakan semua layanan dan menunggu semuanya sehat.
-
-Build pertama makan waktu sekitar 10–20 menit. Skrip aman diulang, dan rahasia yang sudah ada tidak diganti.
-
-Sertifikat HTTPS diambil Caddy saat domain pertama kali dibuka. Kalau gagal, cek `docker compose logs caddy`: biasanya
-DNS belum mengarah ke VPS, atau port 80/443 diblokir firewall penyedia (security group).
-
-## 5. Akun awal
+## Update
 
 ```bash
-docker compose run --rm iam createadmin          # superadmin IAM: buka Portal dan LMS (isi Login ID + sandi kuat)
-docker compose run --rm directory createuser     # akun login Directory
-```
-
-## 6. Muat data karyawan dan piloting
-
-Data karyawan asli dan media **tidak ada di repo**. Salin dari laptop yang memilikinya:
-
-```bash
-# dijalankan di laptop, dari folder portal-sgn
-rsync -az --info=progress2 seed/data/private/ root@IP_VPS:/opt/sgn/seed/data/private/
-rsync -az --info=progress2 seed/assets/       root@IP_VPS:/opt/sgn/seed/assets/            # sekitar 275 MB
-scp "Trailer Sugartime.mp4" root@IP_VPS:/opt/sgn/                                         # video banner login
-```
-
-Lalu di VPS:
-
-```bash
-cd /opt/sgn
-SEED_PASSWORD='SandiAwal-Piloting-2026!' SEED_MUST_CHANGE=1 seed/run.sh --formasi
-```
-
-Hasilnya:
-
-| Akun | Masuk dengan | Sandi |
-| --- | --- | --- |
-| Admin L&D (`ADMIN-LMS`) | `ADMIN-LMS` | `SEED_PASSWORD`, tidak wajib diganti (seed memakai akun ini) |
-| Setiap karyawan aktif di FORMASI | NIK | `SEED_PASSWORD`, **wajib diganti saat pertama masuk** |
-| Peserta demo `DEMO-SPI-01` … `DEMO-LITBANG-01` | ID itu | sama, wajib diganti |
-
-Modul piloting PSDM (`seed/data/piloting.mjs`) terbit sebagai kursus dan ditugaskan ke unit piloting. Daftar peran
-(trainer, pelapor, penyetuju keuangan) dicetak saat seed berjalan.
-
-**Jangan pakai sandi demo `Demo#Sgn2026` di server.** Sandi itu tertulis di repo. Skrip menolak `SEED_MUST_CHANGE` tanpa
-`SEED_PASSWORD`. Selama piloting, orang yang tahu NIK rekannya dan sandi awal bisa masuk lebih dulu. Karena itu, bagikan
-sandi awal hanya ke peserta piloting, dan minta mereka segera masuk. Admin L&D bisa mereset sandi siapa pun di
-**LMS → Pengaturan → Akun karyawan**.
-
-Seed aman diulang, tetapi `--formasi` membangun ulang data LMS (kursus, peserta, progres). **Jangan jalankan ulang
-setelah piloting dimulai**, kecuali memang ingin mengulang dari nol.
-
-## 7. Backup
-
-```bash
-docker/backup.sh                                   # uji sekali
-crontab -e                                         # lalu tambahkan:
-0 2 * * * cd /opt/sgn && docker/backup.sh >> backups/backup.log 2>&1
-```
-
-Backup berisi dump empat database, isi object store (video, PDF, lampiran HR), `.env`, dan kunci IAM, disimpan di
-`backups/` (14 hari). **Salin juga ke luar VPS** (laptop, object storage penyedia, atau snapshot VPS), karena backup yang
-hanya ada di VPS ikut hilang bila VPS-nya rusak.
-
-Pemulihan database: `docker compose exec -T postgres pg_restore -U sgn -d db_lms --clean < backups/…/db_lms.dump`.
-
-## 8. Pembaruan kode
-
-```bash
-cd /opt/sgn
 git pull && docker/clone-repos.sh
-docker compose up -d --build          # migrasi jalan otomatis (iam-migrate, hr-migrate, lms-migrate)
+docker compose up -d --build        # *-migrate run before their services (depends_on: service_completed_successfully)
 docker image prune -f
 ```
 
-Tab browser yang masih terbuka memuat ulang sendiri saat chunk lama hilang (`chunkReload.js`).
-
-## Pemantauan (opsional)
+## Backup / restore
 
 ```bash
-docker compose --profile monitoring up -d
-ssh -L 3002:127.0.0.1:3002 root@IP_VPS     # dari laptop, lalu buka http://localhost:3002
+0 2 * * * cd /opt/sgn && docker/backup.sh >> backups/backup.log 2>&1      # crontab
+docker compose exec -T postgres pg_restore -U sgn -d db_lms --clean < backups/<date>/db_lms.dump
+docker run --rm -v sgn_s3-data:/data -v "$PWD/backups/<date>":/in alpine tar xzf /in/s3-data.tar.gz -C /data
 ```
 
-Login Grafana: `admin`, sandi `GRAFANA_ADMIN_PASSWORD` di `.env`. Grafana dan Prometheus hanya terbuka di localhost VPS.
+`backups/` is local to the host; ship it off-host.
 
-## Perintah sehari-hari
+## Monitoring
 
-| Perlu | Perintah |
-| --- | --- |
-| Status | `docker compose ps` |
-| Log satu layanan | `docker compose logs -f --tail=100 lms` |
-| Restart | `docker compose restart lms` |
-| Masuk database | `docker compose exec postgres psql -U sgn -d db_lms` |
-| Sinkron ulang IAM dari Directory | `docker compose run --rm iam sync --full` |
+`docker compose --profile monitoring up -d`. Grafana listens on `127.0.0.1:3002` (use an SSH tunnel); the user is `admin`
+and the password is `GRAFANA_ADMIN_PASSWORD`.
 
-## Catatan keamanan
+## Notes
 
-- `.env`, `docker/secrets/`, dan `backups/` berisi rahasia. Jangan di-commit dan jangan dibagikan lewat chat.
-- `ufw` hanya membuka SSH, 80, dan 443. Postgres dan port aplikasi tidak dipublikasikan. `lms-fe` hanya terbuka di
-  `127.0.0.1:3003` untuk skrip seed.
-- Aktifkan login SSH dengan kunci saja (`PasswordAuthentication no` di `/etc/ssh/sshd_config`) setelah kunci Anda terpasang.
-- Image `rustfs/rustfs:latest` belum dikunci versinya. Setelah stabil, ganti dengan tag versi tertentu di `compose.yaml`.
+- Docker-published ports bypass ufw. Only `caddy` publishes on `0.0.0.0`; keep it that way.
+- `rustfs/rustfs:latest` is unpinned; pin a tag before production.
+- Presigned media URLs are signed for `S3_PUBLIC_URL`'s host. Caddy and the `lms-fe` nginx both pass `Host` through
+  unchanged; a proxy that rewrites `Host` breaks media.
+- Untested on a real host as of 2026-11-24: Caddyfile, `vps-bootstrap.sh` end to end, and the seed with
+  `SEED_PASSWORD`. `docker compose config` with the overlay passes.
