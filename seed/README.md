@@ -17,6 +17,9 @@ seed/run.sh --assets     # buat ulang dan unggah media (cover, video) lebih dulu
 seed/reset.sh            # kosongkan data demo LMS (kursus, peserta, evaluasi, LNA, Knowledge Hub); akun tetap
 ```
 
+Di server, jangan pakai sandi demo: `SEED_PASSWORD='…' SEED_MUST_CHANGE=1 seed/run.sh --formasi` memberi semua akun sandi
+itu, dan karyawan wajib menggantinya saat pertama masuk (lihat `docker/DEPLOY-VPS.md`).
+
 `--formasi` membutuhkan `seed/data/private/formasi.json`, `people.json`, dan `positions.json` (data karyawan asli; tidak ada
 di repo, minta dari PO). Media hasil `seed/gen/assets.mjs` (sekitar 275 MB) juga tidak ikut repo.
 

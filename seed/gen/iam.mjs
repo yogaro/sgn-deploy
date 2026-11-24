@@ -1,7 +1,8 @@
 // Writes sql/20_iam_roles.sql: the shared demo password, ACTIVE status and the LMS personas' roles. Run on db_iam.
 import { writeFileSync } from 'node:fs'
 
-const hash = '$2y$12$5/g01JYXQiaTc0pBYP3cY.BF0OrVr6Q/oQf3LPbsO.84kQ8ASeY.y'
+const hash = process.env.SEED_PASSWORD_HASH || '$2y$12$5/g01JYXQiaTc0pBYP3cY.BF0OrVr6Q/oQf3LPbsO.84kQ8ASeY.y'
+if (!/^\$2[aby]\$\d\d\$[./A-Za-z0-9]{53}$/.test(hash)) throw new Error('SEED_PASSWORD_HASH is not a bcrypt hash')
 const personas = {
   LMS_ADMIN: ['PTSGN-1034', 'PTSGN-1035', 'PTSGN-1036'],
   LMS_REPORTER: ['PTSGN-1034', 'PTSGN-1007', 'PTSGN-1011', 'PTSGN-1001'],
