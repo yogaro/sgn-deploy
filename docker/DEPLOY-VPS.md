@@ -83,12 +83,13 @@ docker image prune -f
 ## Backup / restore
 
 ```bash
-0 2 * * * cd /opt/sgn && docker/backup.sh >> backups/backup.log 2>&1      # crontab
+0 2 * * * cd /opt/sgn && BACKUP_REMOTE=backup@HOST:/srv/sgn docker/backup.sh >> backups/backup.log 2>&1   # crontab
 docker compose exec -T postgres pg_restore -U sgn -d db_lms --clean < backups/<date>/db_lms.dump
 docker run --rm -v sgn_s3-data:/data -v "$PWD/backups/<date>":/in alpine tar xzf /in/s3-data.tar.gz -C /data
 ```
 
-`backups/` is local to the host; ship it off-host.
+`BACKUP_REMOTE` rsyncs each new backup off-host over SSH (key auth, `BatchMode`); without it the backups stay on the
+host only.
 
 ## Monitoring
 
@@ -98,7 +99,6 @@ and the password is `GRAFANA_ADMIN_PASSWORD`.
 ## Notes
 
 - Docker-published ports bypass ufw. Only `caddy` publishes on `0.0.0.0`; keep it that way.
-- `rustfs/rustfs:latest` is unpinned; pin a tag before production.
 - Presigned media URLs are signed for `S3_PUBLIC_URL`'s host. Caddy and the `lms-fe` nginx both pass `Host` through
   unchanged; a proxy that rewrites `Host` breaks media.
 - Untested on a real host as of 2026-11-24: Caddyfile, `vps-bootstrap.sh` end to end, and the seed with

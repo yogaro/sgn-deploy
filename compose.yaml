@@ -61,6 +61,7 @@ services:
       - ./docker/postgres/initdb:/docker-entrypoint-initdb.d:ro
       - ./sgn-directory-service/migrations:/migrations/directory:ro
     ports: ['127.0.0.1:${POSTGRES_PORT:-55432}:5432']
+    restart: unless-stopped
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d db_directory']
       interval: 5s
@@ -120,7 +121,7 @@ services:
       iam: { condition: service_healthy }
 
   s3:
-    image: rustfs/rustfs:latest
+    image: rustfs/rustfs:1.0.0
     environment:
       RUSTFS_ACCESS_KEY: ${S3_ACCESS_KEY:?set S3_ACCESS_KEY in .env}
       RUSTFS_SECRET_KEY: ${S3_SECRET_KEY:?set S3_SECRET_KEY in .env}
