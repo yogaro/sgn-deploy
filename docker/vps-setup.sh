@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 # Prepares a fresh Ubuntu 22.04/24.04 VPS for the SGN stack: Docker + Compose, Node 22 (seed scripts), firewall, swap.
 # Run once as root: sudo bash docker/vps-setup.sh   (safe to repeat)
+# On a RunCloud server: sudo PROXY=runcloud bash docker/vps-setup.sh   (the firewall is left to RunCloud)
 set -euo pipefail
 [[ $EUID -eq 0 ]] || { echo "Run as root (sudo)." >&2; exit 1; }
 . /etc/os-release
 [[ "$ID" == "ubuntu" ]] || echo "Warning: written for Ubuntu, this is $PRETTY_NAME." >&2
 
 apt-get update -q
-apt-get install -yq ca-certificates curl git rsync python3 ufw openssl
+apt-get install -yq ca-certificates curl git rsync python3 openssl
+[[ "${PROXY:-caddy}" == runcloud ]] || apt-get install -yq ufw
 
 if ! command -v docker >/dev/null; then
   curl -fsSL https://get.docker.com | sh
@@ -26,10 +28,14 @@ if ! swapon --show | grep -q . && [[ $(awk '/MemTotal/ {print int($2/1024/1024)}
 fi
 
 # Only SSH and the web are reachable from outside. Docker publishes 80/443 itself; the app ports are not published.
-ufw allow OpenSSH
-ufw allow 80/tcp
-ufw allow 443
-ufw --force enable
+if [[ "${PROXY:-caddy}" == runcloud ]]; then
+  echo "PROXY=runcloud: firewall left to RunCloud (allow 22, 80, 443 there)."
+else
+  ufw allow OpenSSH
+  ufw allow 80/tcp
+  ufw allow 443
+  ufw --force enable
+fi
 
 if [[ -n "${SUDO_USER:-}" && "$SUDO_USER" != root ]]; then
   usermod -aG docker "$SUDO_USER"

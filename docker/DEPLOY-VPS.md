@@ -54,6 +54,7 @@ folder yang dirujuk compose, `go.mod` (`replace ../`), dan `package.json` (`file
 | `docker/vps-setup.sh` | Docker (get.docker.com), Node 22 (NodeSource), swap 4 GB bila RAM < 8 GB, ufw 22/80/443. |
 | `docker/clone-repos.sh` | Clone/pull 11 repo aplikasi ke nama folder yang dirujuk compose. Variabel `GIT_BASE`, `BRANCH`. |
 | `docker/vps-bootstrap.sh` | Menulis `.env` dan kunci tanda tangan, build, membuat klien layanan, menyalakan semua. Idempoten. |
+| `compose.runcloud.yaml`, `docker/runcloud/*.conf` | Varian RunCloud: Caddy mati, entry point di loopback, config proxy untuk nginx RunCloud (bagian RunCloud). |
 | `docker/backup.sh` | `pg_dump -Fc` ×4, tar volume `<project>_s3-data`, `.env`, kunci tanda tangan → `backups/<tanggal>/`; disimpan `KEEP_DAYS` hari (14). |
 
 ## Instalasi
@@ -82,6 +83,36 @@ lalu `docker/vps-bootstrap.sh` tanpa variabel. Mengganti domain kemudian: ubah `
 
 Skrip juga membuat `docker/secrets/iam-signing-key.txt` (`genkey`) bila belum ada. Nilai yang sudah ada tidak diganti.
 Kalau build gagal karena timeout jaringan (`go mod download`, `npm ci`), jalankan ulang skripnya.
+
+## RunCloud
+
+Di server yang dikelola RunCloud, nginx RunCloud memegang 80/443 dan TLS, jadi Caddy dimatikan dan entry point
+dipublikasikan di loopback (`compose.runcloud.yaml`):
+
+| Domain | Upstream | Config RunCloud |
+| --- | --- | --- |
+| `PORTAL_DOMAIN` | `127.0.0.1:3000` (portal) | `docker/runcloud/portal.conf` |
+| `LMS_DOMAIN` | `127.0.0.1:3003` (lms-fe) | `docker/runcloud/lms.conf` |
+| `DIRECTORY_DOMAIN` | `127.0.0.1:3001` (directory-fe), `/api/` → `127.0.0.1:8080/` (directory) | `docker/runcloud/directory.conf` |
+
+Port mengikuti `PORTAL_PORT`, `LMS_WEB_PORT`, `DIRECTORY_FE_PORT`, `DIRECTORY_PORT` di `.env`; kalau diubah, ubah juga
+`proxy_pass` di config RunCloud.
+
+```bash
+sudo PROXY=runcloud bash docker/vps-setup.sh     # tanpa ufw; firewall diurus RunCloud
+docker/clone-repos.sh
+PROXY=runcloud PORTAL_DOMAIN=… LMS_DOMAIN=… DIRECTORY_DOMAIN=… docker/vps-bootstrap.sh
+```
+
+`PROXY=runcloud` tersimpan lewat `COMPOSE_FILE` di `.env`, jadi bootstrap ulang dan `docker compose` berikutnya tetap tanpa
+Caddy. Lalu di dasbor RunCloud, untuk tiap domain:
+
+1. Web Application baru dengan domain itu; Settings → Web Application Stack **Native NGiNX + Custom Config**.
+2. SSL/TLS → Let's Encrypt.
+3. NGiNX Config → Add a New Config → Predefined Config → **Proxy**; ganti isinya dengan file `docker/runcloud/*.conf`
+   yang sesuai → Run and Debug → Create Config.
+
+Firewall RunCloud: buka 22, 80, 443 saja. Port 3000/3001/3003/8080 hanya di `127.0.0.1`, tidak perlu dibuka.
 
 ## Seed (FORMASI + modul piloting)
 

@@ -1,0 +1,17 @@
+# Overlay for a RunCloud server: RunCloud's nginx owns 80/443 and TLS, so Caddy stays off and the entry points are
+# published on loopback for RunCloud's proxy configs. Used after compose.prod.yaml (PROXY=runcloud in vps-bootstrap.sh).
+services:
+  caddy:
+    profiles: [caddy]
+
+  portal:
+    ports: !override ['127.0.0.1:${PORTAL_PORT:-3000}:80']
+
+  lms-fe:
+    ports: !override ['127.0.0.1:${LMS_WEB_PORT:-3003}:80']
+
+  directory-fe:
+    ports: !override ['127.0.0.1:${DIRECTORY_FE_PORT:-3001}:80']
+
+  directory:
+    ports: !override ['127.0.0.1:${DIRECTORY_PORT:-8080}:8080']
