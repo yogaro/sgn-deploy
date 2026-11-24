@@ -52,3 +52,6 @@ tmp/
 /.claude/
 /.agents/
 /skills-lock.json
+
+# Backup server (docker/backup.sh)
+/backups/

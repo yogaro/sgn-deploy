@@ -44,7 +44,8 @@ docker compose up -d
 docker compose ps                    # semua "healthy", migrate "exited (0)"
 ```
 
-Langkah awal (akun admin, klien layanan, database LMS) ada di [docker/README.md](docker/README.md).
+Langkah awal (akun admin, klien layanan, database LMS) ada di [docker/README.md](docker/README.md). Deploy ke server
+(HTTPS, domain, backup, data piloting): [docker/DEPLOY-VPS.md](docker/DEPLOY-VPS.md).
 
 | Alamat | Aplikasi |
 | --- | --- |
