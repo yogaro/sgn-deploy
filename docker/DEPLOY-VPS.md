@@ -78,13 +78,16 @@ Kalau build gagal karena timeout jaringan (`go mod download`, `npm ci`), jalanka
 
 ## Seed (FORMASI + modul piloting)
 
-Tidak ada di git; salin dari mesin yang menyimpannya (dijalankan dari root workspace di mesin itu):
+Data karyawan asli dan media tidak ada di git. Keduanya dikirim terpisah sebagai `sgn-seed-data.tar.gz` (sekitar 254 MB):
+`seed/data/private/` (formasi.json, people.json, positions.json), `seed/assets/` (media.json, manifest.json, cover, PDF
+piloting, video), dan `Trailer Sugartime.mp4` (banner halaman masuk). Ekstrak di root repo:
 
 ```bash
-rsync -az seed/data/private/ HOST:/opt/sgn/seed/data/private/   # formasi.json, people.json, positions.json
-rsync -az seed/assets/       HOST:/opt/sgn/seed/assets/         # ~275 MB, termasuk media.json dan PDF piloting
-scp "Trailer Sugartime.mp4"  HOST:/opt/sgn/                     # video banner halaman masuk
+tar -xzf sgn-seed-data.tar.gz -C /opt/sgn
+ls /opt/sgn/seed/data/private /opt/sgn/seed/assets/media.json
 ```
+
+`seed/data/private/` berisi data pribadi karyawan: hapus arsipnya setelah diekstrak.
 
 ```bash
 SEED_PASSWORD='…' SEED_MUST_CHANGE=1 seed/run.sh --formasi
