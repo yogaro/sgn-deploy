@@ -2,7 +2,8 @@
 # First start of the whole stack on a server: writes .env with random secrets, creates the IAM signing key,
 # builds the images, creates the three service clients (IAM->Directory, HR->IAM, LMS->IAM) and starts everything.
 # Safe to repeat: existing secrets and clients in .env are kept. Run from the repo root after docker/clone-repos.sh.
-# Usage: SGN_DOMAIN=sgn.example.co.id DIRECTORY_DOMAIN=directory.example.co.id docker/vps-bootstrap.sh
+# Usage: PORTAL_DOMAIN=portal.example.co.id LMS_DOMAIN=sugarledge.example.co.id DIRECTORY_DOMAIN=directory.example.co.id \
+#          docker/vps-bootstrap.sh          (or set the three in .env first)
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -22,15 +23,15 @@ need() { [[ -n "$(get_env "$1")" ]]; }
 
 [[ -f .env ]] || { cp .env.example .env; chmod 600 .env; echo "Created .env from .env.example"; }
 
-for key in SGN_DOMAIN DIRECTORY_DOMAIN; do
+for key in PORTAL_DOMAIN LMS_DOMAIN DIRECTORY_DOMAIN; do
   if [[ -n "${!key:-}" ]]; then set_env "$key" "${!key}"; fi
-  need "$key" || { echo "Set $key (e.g. $key=sgn.example.co.id $0)." >&2; exit 1; }
+  need "$key" || { echo "Set $key, as an environment variable or in .env (see the usage line in $0)." >&2; exit 1; }
 done
-SGN_DOMAIN=$(get_env SGN_DOMAIN)
+PORTAL_DOMAIN=$(get_env PORTAL_DOMAIN) LMS_DOMAIN=$(get_env LMS_DOMAIN) DIRECTORY_DOMAIN=$(get_env DIRECTORY_DOMAIN)
 
 set_env COMPOSE_FILE compose.yaml:compose.prod.yaml
 set_env COOKIE_SECURE true
-set_env LMS_PUBLIC_URL "https://$SGN_DOMAIN"
+set_env LMS_PUBLIC_URL "https://$LMS_DOMAIN"
 need POSTGRES_PASSWORD || set_env POSTGRES_PASSWORD "$(rand 24)"
 need S3_ACCESS_KEY || set_env S3_ACCESS_KEY "$(rand 12)"
 need S3_SECRET_KEY || set_env S3_SECRET_KEY "$(rand 24)"
@@ -75,12 +76,12 @@ docker compose ps --format 'table {{.Service}}\t{{.Status}}'
 cat <<EOF
 
 Stack is up:
-  Portal       https://$SGN_DOMAIN/
-  SUGARLedge   https://$SGN_DOMAIN/lms/
-  Directory    https://$(get_env DIRECTORY_DOMAIN)/
+  Portal       https://$PORTAL_DOMAIN/
+  SUGARLedge   https://$LMS_DOMAIN/lms/
+  Directory    https://$DIRECTORY_DOMAIN/
 
 Next (see docker/DEPLOY-VPS.md):
   docker compose run --rm iam createadmin          # IAM superadmin (Portal and LMS)
   docker compose run --rm directory createuser     # Directory FE login
-  SEED_PASSWORD='...' seed/run.sh --formasi        # real staff + pilot modules
+  SEED_PASSWORD='...' SEED_MUST_CHANGE=1 seed/run.sh --formasi && docker compose restart hr-worker
 EOF

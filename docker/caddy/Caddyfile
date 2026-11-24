@@ -1,22 +1,21 @@
 # Public entry point. Caddy gets and renews the Let's Encrypt certificates itself.
+# One host per app; each frontend's nginx proxies its own /api/* to the backends, so every call stays same-origin.
 
-# Portal at /, SUGARLedge at /lms/ on the same host, so both share IAM's SameSite=Strict refresh cookie.
-{$SGN_DOMAIN} {
+# Portal (IAM admin, HR).
+{$PORTAL_DOMAIN} {
 	encode zstd gzip
+	reverse_proxy portal:80
+}
 
-	@lms path /lms /lms/* /api/lms/* /lms-files/*
-	handle @lms {
+# SUGARLedge. The app lives under /lms/; the lms-fe nginx redirects / there.
+{$LMS_DOMAIN} {
+	encode zstd gzip
+	request_body {
 		# Course videos and PDFs go up to 600 MB, as in the lms-fe nginx.
-		request_body {
-			max_size 600MB
-		}
-		reverse_proxy lms-fe:80 {
-			flush_interval -1
-		}
+		max_size 600MB
 	}
-
-	handle {
-		reverse_proxy portal:80
+	reverse_proxy lms-fe:80 {
+		flush_interval -1
 	}
 }
 

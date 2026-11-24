@@ -1,13 +1,12 @@
 # Server overlay: HTTPS through Caddy, public origins from .env, no app port open to the internet.
 # Used together with compose.yaml through COMPOSE_FILE in .env (docker/vps-bootstrap.sh writes it).
-x-public-origin: &public-origin
-  ALLOWED_ORIGIN: https://${SGN_DOMAIN:?set SGN_DOMAIN in .env}
-
+# Every browser call is same-origin through the frontends' nginx, so ALLOWED_ORIGIN only names each app's own host.
 services:
   caddy:
     image: caddy:2.10-alpine
     environment:
-      SGN_DOMAIN: ${SGN_DOMAIN:?set SGN_DOMAIN in .env}
+      PORTAL_DOMAIN: ${PORTAL_DOMAIN:?set PORTAL_DOMAIN in .env}
+      LMS_DOMAIN: ${LMS_DOMAIN:?set LMS_DOMAIN in .env}
       DIRECTORY_DOMAIN: ${DIRECTORY_DOMAIN:?set DIRECTORY_DOMAIN in .env}
     volumes:
       - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
@@ -19,23 +18,25 @@ services:
 
   iam:
     environment:
-      <<: *public-origin
+      ALLOWED_ORIGIN: https://${PORTAL_DOMAIN:?set PORTAL_DOMAIN in .env}
       COOKIE_SECURE: 'true'
     ports: !reset []
 
   hr:
-    environment: *public-origin
+    environment:
+      ALLOWED_ORIGIN: https://${PORTAL_DOMAIN:?set PORTAL_DOMAIN in .env}
     ports: !reset []
 
+  # ALLOWED_ORIGIN is also the address printed on certificate PDFs (<origin>/lms/verifikasi/<number>).
   lms:
     environment:
-      <<: *public-origin
-      S3_PUBLIC_URL: https://${SGN_DOMAIN}
+      ALLOWED_ORIGIN: https://${LMS_DOMAIN:?set LMS_DOMAIN in .env}
+      S3_PUBLIC_URL: https://${LMS_DOMAIN}
     ports: !reset []
 
   lms-worker:
     environment:
-      S3_PUBLIC_URL: https://${SGN_DOMAIN}
+      S3_PUBLIC_URL: https://${LMS_DOMAIN:?set LMS_DOMAIN in .env}
 
   directory:
     environment:
