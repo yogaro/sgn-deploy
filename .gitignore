@@ -55,3 +55,6 @@ tmp/
 
 # Backup server (docker/backup.sh)
 /backups/
+
+# Isi env asli untuk compose.stack.yaml
+/stack.env

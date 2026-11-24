@@ -1,0 +1,3 @@
+*
+!docker/postgres/
+!sgn-directory-service/migrations/

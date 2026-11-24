@@ -12,6 +12,8 @@ internal: postgres:5432 (db_iam, db_hr, db_lms, db_directory), s3 (RustFS), hr-w
 loopback: lms-fe 127.0.0.1:3003 (seed), postgres 127.0.0.1:55432
 ```
 
+Panel yang hanya men-deploy stack dari image jadi (tanpa build di server): lihat `DEPLOY-STACK.md`.
+
 Semua panggilan browser same-origin: tiap frontend mem-proxy `/api/*` miliknya sendiri, jadi backend tidak punya host
 publik. Cookie refresh IAM (`SameSite=Strict`, `Path=/api/iam/v1/auth`) berlaku per host, sehingga Portal dan LMS punya
 sesi masing-masing: masuk dan keluar di satu aplikasi tidak memengaruhi yang lain.

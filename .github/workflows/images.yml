@@ -1,0 +1,72 @@
+name: images
+
+# Builds every SGN image from the main branch of each app repo and pushes it to ghcr.io/<owner>/<name>,
+# tagged latest and run-<run number>, for compose.stack.yaml. Run it from the Actions tab after pushing app changes.
+# REPOS_READ_TOKEN: a fine-grained token with Contents read on the 11 app repos (they are private).
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Branch of the app repos to build
+        default: main
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: sgn-postgres, context: ., file: docker/postgres/Dockerfile }
+          - { name: sgn-iam-service, context: ., file: sgn-iam-service/Dockerfile }
+          - { name: sgn-hr-service, context: ., file: sgn-hr-service/Dockerfile }
+          - { name: sgn-lms-service, context: ., file: sgn-lms-service/Dockerfile }
+          - { name: sgn-directory-service, context: ., file: sgn-directory-service/Dockerfile }
+          - { name: sgn-portal, context: ., file: sgn-portal/Dockerfile }
+          - { name: sgn-lms-fe, context: sgn-lms-fe, file: sgn-lms-fe/Dockerfile }
+          # Same-origin API path, so one image serves any Directory domain (the proxy routes /api/).
+          - { name: sgn-directory-fe, context: ., file: sgn-directory-fe/Dockerfile, args: VITE_DIRECTORY_SERVICE_URL=/api }
+    steps:
+      - uses: actions/checkout@v4
+
+      # repo name -> folder name compose, go.mod and package.json expect (docker/clone-repos.sh has the same map).
+      - name: Check out the app repos
+        env:
+          TOKEN: ${{ secrets.REPOS_READ_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REF: ${{ inputs.ref }}
+        run: |
+          set -euo pipefail
+          for pair in sgn-iam-be:sgn-iam-service sgn-iam-contracts:sgn-iam-contracts sgn-hr-be:sgn-hr-service \
+            sgn-hr-contracts:sgn-hr-contracts sgn-lms-be:sgn-lms-service sgn-lms-fe:sgn-lms-fe \
+            sgn-lms-contracts:sgn-lms-contracts sgn-directory-be:sgn-directory-service sgn-directory-fe:sgn-directory-fe \
+            sgn-directory-contracts:sgn-directory-contracts sgn-portal-fe:sgn-portal; do
+            git -c "http.extraHeader=Authorization: Basic $(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)" \
+              clone -q --depth 1 --branch "$REF" "https://github.com/$OWNER/${pair%%:*}.git" "${pair##*:}"
+          done
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.file }}
+          build-args: ${{ matrix.args }}
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:run-${{ github.run_number }}
+          labels: org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          cache-from: type=gha,scope=${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}

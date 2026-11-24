@@ -1,0 +1,201 @@
+# Whole SGN stack from prebuilt images (ghcr.io, built by .github/workflows/images.yml), for panels that deploy a compose
+# "stack" without the repo files: no build, no bind mount. Values come from the panel's environment (stack.env.example).
+# TLS and domains are the reverse proxy's job (RunCloud: docker/runcloud/*.conf); entry points listen on loopback only.
+# See docker/DEPLOY-STACK.md.
+name: sgn
+
+x-hr-env: &hr-env
+  DATABASE_URL: postgres://${POSTGRES_USER:-sgn}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@postgres:5432/db_hr?sslmode=disable
+  IAM_BASE_URL: http://iam:8081
+  IAM_CLIENT_ID: svc-sgn-hr-service
+  IAM_CLIENT_SECRET: ${HR_IAM_CLIENT_SECRET:?set HR_IAM_CLIENT_SECRET}
+  IAM_SYNC_INTERVAL: 1h
+  ALLOWED_ORIGIN: https://${PORTAL_DOMAIN:?set PORTAL_DOMAIN}
+  S3_ENDPOINT: http://s3:9000
+  S3_BUCKET: hr-files
+  S3_ACCESS_KEY: ${S3_ACCESS_KEY:?set S3_ACCESS_KEY}
+  S3_SECRET_KEY: ${S3_SECRET_KEY:?set S3_SECRET_KEY}
+
+x-lms-env: &lms-env
+  DATABASE_URL: postgres://${POSTGRES_USER:-sgn}:${POSTGRES_PASSWORD}@postgres:5432/db_lms?sslmode=disable
+  IAM_BASE_URL: http://iam:8081
+  IAM_CLIENT_ID: svc-sgn-lms-service
+  IAM_CLIENT_SECRET: ${LMS_IAM_CLIENT_SECRET:?set LMS_IAM_CLIENT_SECRET}
+  IAM_SYNC_INTERVAL: 1h
+  # Also the address printed on certificate PDFs (<origin>/lms/verifikasi/<number>).
+  ALLOWED_ORIGIN: https://${LMS_DOMAIN:?set LMS_DOMAIN}
+  S3_ENDPOINT: http://s3:9000
+  S3_PUBLIC_URL: https://${LMS_DOMAIN}
+  S3_BUCKET: lms-files
+  S3_ACCESS_KEY: ${S3_ACCESS_KEY}
+  S3_SECRET_KEY: ${S3_SECRET_KEY}
+
+x-iam-env: &iam-env
+  DATABASE_URL: postgres://${POSTGRES_USER:-sgn}:${POSTGRES_PASSWORD}@postgres:5432/db_iam?sslmode=disable
+
+# The signing key arrives as an environment variable; IAM reads it from a file, so it is written to /tmp first.
+x-iam-key: &iam-key
+  entrypoint: ['sh', '-c', 'umask 077 && printf %s "$$IAM_SIGNING_KEY" > /tmp/iam-signing-key && exec "$$@"', '--']
+  environment:
+    <<: *iam-env
+    IAM_SIGNING_KEY: ${IAM_SIGNING_KEY:?set IAM_SIGNING_KEY}
+    SIGNING_KEY_PATH: /tmp/iam-signing-key
+    SIGNING_KEY_ID: '1'
+    ALLOWED_ORIGIN: https://${PORTAL_DOMAIN}
+    COOKIE_SECURE: 'true'
+    DIRECTORY_INTERNAL_URL: http://directory:8080
+    DIRECTORY_SERVICE_KEY: ${DIRECTORY_SERVICE_KEY:?set DIRECTORY_SERVICE_KEY}
+
+x-ready: &ready
+  postgres: { condition: service_healthy }
+
+services:
+  postgres:
+    image: ${REGISTRY:-ghcr.io/yogaro}/sgn-postgres:${IMAGE_TAG:-latest}
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sgn}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: postgres
+    volumes: ['pgdata:/var/lib/postgresql/data']
+    ports: ['127.0.0.1:55432:5432']
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d db_directory']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  iam-migrate:
+    image: ${REGISTRY:-ghcr.io/yogaro}/sgn-iam-service:${IMAGE_TAG:-latest}
+    command: ['migrate']
+    environment: *iam-env
+    healthcheck: { disable: true }
+    depends_on: *ready
+
+  bootstrap:
+    image: ${REGISTRY:-ghcr.io/yogaro}/sgn-postgres:${IMAGE_TAG:-latest}
+    entrypoint: ['sgn-bootstrap']
+    environment:
+      PGHOST: postgres
+      PGUSER: ${POSTGRES_USER:-sgn}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      ADMIN_LOGIN: ${ADMIN_LOGIN:?set ADMIN_LOGIN}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?set ADMIN_PASSWORD}
+      DIRECTORY_ADMIN_EMAIL: ${DIRECTORY_ADMIN_EMAIL:?set DIRECTORY_ADMIN_EMAIL}
+      DIRECTORY_ADMIN_PASSWORD: ${DIRECTORY_ADMIN_PASSWORD:?set DIRECTORY_ADMIN_PASSWORD}
+      HR_IAM_CLIENT_SECRET: ${HR_IAM_CLIENT_SECRET}
+      LMS_IAM_CLIENT_SECRET: ${LMS_IAM_CLIENT_SECRET}
+      DIRECTORY_SERVICE_KEY: ${DIRECTORY_SERVICE_KEY}
+    healthcheck: { disable: true }
+    depends_on:
+      <<: *ready
+      iam-migrate: { condition: service_completed_successfully }
+
+  iam:
+    <<: *iam-key
+    image: ${REGISTRY:-ghcr.io/yogaro}/sgn-iam-service:${IMAGE_TAG:-latest}
+    command: ['server']
+    restart: unless-stopped
+    depends_on:
+      bootstrap: { condition: service_completed_successfully }
+
+  directory:
+    image: ${REGISTRY:-ghcr.io/yogaro}/sgn-directory-service:${IMAGE_TAG:-latest}
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-sgn}:${POSTGRES_PASSWORD}@postgres:5432/db_directory?sslmode=disable
+      ALLOWED_ORIGIN: https://${DIRECTORY_DOMAIN:?set DIRECTORY_DOMAIN}
+      COOKIE_SECURE: 'true'
+    ports: ['127.0.0.1:${DIRECTORY_PORT:-8080}:8080']
+    restart: unless-stopped
+    depends_on:
+      bootstrap: { condition: service_completed_successfully }
+
+  s3:
+    image: rustfs/rustfs:1.0.0
+    environment:
+      RUSTFS_ACCESS_KEY: ${S3_ACCESS_KEY}
+      RUSTFS_SECRET_KEY: ${S3_SECRET_KEY}
+    volumes: ['s3-data:/data']
+    restart: unless-stopped
+
+  hr-migrate:
+    image: ${REGISTRY:-ghcr.io/yogaro}/sgn-hr-service:${IMAGE_TAG:-latest}
+    command: ['migrate']
+    environment: *hr-env
+    healthcheck: { disable: true }
+    depends_on: *ready
+
+  hr:
+    image: ${REGISTRY:-ghcr.io/yogaro}/sgn-hr-service:${IMAGE_TAG:-latest}
+    environment: *hr-env
+    restart: unless-stopped
+    depends_on:
+      hr-migrate: { condition: service_completed_successfully }
+      iam: { condition: service_healthy }
+      s3: { condition: service_started }
+
+  hr-worker:
+    image: ${REGISTRY:-ghcr.io/yogaro}/sgn-hr-service:${IMAGE_TAG:-latest}
+    command: ['worker']
+    environment: *hr-env
+    healthcheck: { disable: true }
+    restart: unless-stopped
+    depends_on:
+      hr-migrate: { condition: service_completed_successfully }
+      iam: { condition: service_healthy }
+
+  lms-migrate:
+    image: ${REGISTRY:-ghcr.io/yogaro}/sgn-lms-service:${IMAGE_TAG:-latest}
+    command: ['migrate']
+    environment: *lms-env
+    healthcheck: { disable: true }
+    depends_on: *ready
+
+  lms:
+    image: ${REGISTRY:-ghcr.io/yogaro}/sgn-lms-service:${IMAGE_TAG:-latest}
+    environment: *lms-env
+    restart: unless-stopped
+    depends_on:
+      lms-migrate: { condition: service_completed_successfully }
+      iam: { condition: service_healthy }
+      s3: { condition: service_started }
+
+  lms-worker:
+    image: ${REGISTRY:-ghcr.io/yogaro}/sgn-lms-service:${IMAGE_TAG:-latest}
+    command: ['worker']
+    environment: *lms-env
+    healthcheck: { disable: true }
+    restart: unless-stopped
+    depends_on:
+      lms-migrate: { condition: service_completed_successfully }
+      iam: { condition: service_healthy }
+      s3: { condition: service_started }
+
+  portal:
+    image: ${REGISTRY:-ghcr.io/yogaro}/sgn-portal:${IMAGE_TAG:-latest}
+    ports: ['127.0.0.1:${PORTAL_PORT:-3000}:80']
+    restart: unless-stopped
+    depends_on:
+      iam: { condition: service_healthy }
+      hr: { condition: service_healthy }
+
+  lms-fe:
+    image: ${REGISTRY:-ghcr.io/yogaro}/sgn-lms-fe:${IMAGE_TAG:-latest}
+    ports: ['127.0.0.1:${LMS_WEB_PORT:-3003}:80']
+    restart: unless-stopped
+    depends_on:
+      iam: { condition: service_healthy }
+      lms: { condition: service_healthy }
+      s3: { condition: service_started }
+
+  # Built with VITE_DIRECTORY_SERVICE_URL=/api: the proxy in front routes <DIRECTORY_DOMAIN>/api/ to directory:8080.
+  directory-fe:
+    image: ${REGISTRY:-ghcr.io/yogaro}/sgn-directory-fe:${IMAGE_TAG:-latest}
+    ports: ['127.0.0.1:${DIRECTORY_FE_PORT:-3001}:80']
+    restart: unless-stopped
+    depends_on:
+      directory: { condition: service_healthy }
+
+volumes:
+  pgdata:
+  s3-data:
