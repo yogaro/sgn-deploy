@@ -13,7 +13,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 # Docker Stacks (RunCloud) have no compose project: SEED_PG_CONTAINER / SEED_IAM_CONTAINER name the running containers.
 pg_exec() {
-  if [[ -n "${SEED_PG_CONTAINER:-}" ]]; then docker exec -i "$SEED_PG_CONTAINER" psql -U sgn "$@"
+  # The socket, not PGHOST: a stack env shared by every container (PGHOST=<service>) would send psql over TCP with no password.
+  if [[ -n "${SEED_PG_CONTAINER:-}" ]]; then docker exec -i -e PGHOST=/run/postgresql "$SEED_PG_CONTAINER" psql -U sgn "$@"
   else docker compose exec -T postgres psql -U sgn "$@"; fi
 }
 psql() { pg_exec -v ON_ERROR_STOP=1 -q "$@"; }
@@ -27,6 +28,8 @@ export LMS_BASE=${LMS_BASE:-http://127.0.0.1:${LMS_WEB_PORT:-3003}}
 # bcrypt hash of the password, made by pgcrypto inside the Postgres container (the scratch "postgres" database).
 export SEED_PASSWORD_HASH=$(echo "CREATE EXTENSION IF NOT EXISTS pgcrypto; SELECT crypt(:'pw', gen_salt('bf', 12));" |
   pg_exec -d postgres -v ON_ERROR_STOP=1 -qtA -v pw="$DEMO_PASSWORD" | tail -1)
+# Without the hash the account scripts would fall back to the public demo password: stop instead.
+[[ "$SEED_PASSWORD_HASH" == \$2* ]] || { echo "could not make the password hash (database not reachable?)" >&2; exit 1; }
 # The L&D admin the scripts sign in as: a real one with --formasi (Staf Pendidikan & Pelatihan), else the made-up Arief.
 export SEED_ADMIN_EMAIL=$([[ -n "$FORMASI" ]] && echo "admin.lms@sgn.example" || echo "arief.nasution@sgn.example")
 # The sign-in name of that admin (fiktif seed: set SEED_ADMIN_LOGIN to the NIK of the employee above).

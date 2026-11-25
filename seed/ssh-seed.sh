@@ -2,7 +2,8 @@
 # One command from this machine: copies the seed (scripts, the real staff list, media) to a RunCloud server over SSH and
 # runs seed/run.sh --formasi there against the running stack containers. No git or token on the server.
 # Needs here: ssh access, seed/data/private/ and seed/assets/ (sgn-seed-data.tar.gz). Needs there: docker, node 20+,
-# python3, curl. The copy is removed from the server afterwards.
+# python3, curl. The staff list and media (~290 MB) are sent once and kept on the server until a run succeeds, so a
+# retry only sends the scripts; after a successful run the copy is removed.
 # Usage: SEED_PASSWORD='…' [SEED_MUST_CHANGE=0] [SSH_PORT=22] seed/ssh-seed.sh user@server https://lms.example.co.id
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -16,16 +17,23 @@ for f in seed/data/private/formasi.json seed/assets/media.json "Trailer Sugartim
 done
 
 echo "Checking the server..."
-"${SSH[@]}" "$DEST" 'set -e
+HAVE_DATA=$("${SSH[@]}" "$DEST" 'set -e
   for t in docker python3 curl; do command -v $t >/dev/null || { echo "missing on server: $t" >&2; exit 1; }; done
-  docker ps --format "{{.Names}}" | grep -q sgn-postgres || { echo "no sgn-postgres container (or no docker access)" >&2; exit 1; }'
+  docker ps --format "{{.Names}}" | grep -q sgn-postgres || { echo "no sgn-postgres container (or no docker access)" >&2; exit 1; }
+  [ -f ~/sgn-seed/.data-copied ] && echo yes || echo no')
 
-echo "Copying the seed to the server (about 290 MB)..."
-COPYFILE_DISABLE=1 tar -czf - --exclude '.DS_Store' --exclude 'seed/backup' --exclude 'seed/sql/[123]0_*' \
-  seed "Trailer Sugartime.mp4" | "${SSH[@]}" "$DEST" 'rm -rf ~/sgn-seed && mkdir -p ~/sgn-seed && tar -xzf - -C ~/sgn-seed'
+if [[ "$HAVE_DATA" == yes ]]; then
+  echo "Staff list and media already on the server from the last try: not sending them again."
+else
+  echo "Copying the staff list and media to the server (about 290 MB, no progress shown)..."
+  COPYFILE_DISABLE=1 tar -czf - --exclude '.DS_Store' seed/assets seed/data "Trailer Sugartime.mp4" |
+    "${SSH[@]}" "$DEST" 'rm -rf ~/sgn-seed && mkdir -p ~/sgn-seed && tar -xzf - -C ~/sgn-seed && touch ~/sgn-seed/.data-copied'
+fi
 
+# The scripts (small) travel with the run, so a retry always uses the version on this machine.
 echo "Running the seed on the server..."
-"${SSH[@]}" "$DEST" "cd ~/sgn-seed && \
+COPYFILE_DISABLE=1 tar -czf - --exclude '.DS_Store' --exclude 'seed/assets' --exclude 'seed/data' --exclude 'seed/backup' \
+  --exclude 'seed/sql/[123]0_*' seed | "${SSH[@]}" "$DEST" "cd ~/sgn-seed && tar -xzf - && \
   find seed -name '*.sh' -exec sed -i 's/\r\$//' {} + && \
   $(cat <<'NODE'
 if ! command -v node >/dev/null || [ "$(node -p 'process.versions.node.split(".")[0]')" -lt 20 ]; then
@@ -44,7 +52,10 @@ NODE
          SEED_IAM_CONTAINER=\$(docker ps --format '{{.Names}}' | grep sgn-stack-iam | head -1) \
          LMS_BASE=$(printf %q "$LMS_BASE") SEED_PASSWORD=$(printf %q "$SEED_PASSWORD") SEED_MUST_CHANGE=$(printf %q "$MUST") && \
   echo \"containers: \$SEED_PG_CONTAINER / \$SEED_IAM_CONTAINER\" && \
-  bash seed/run.sh --formasi; status=\$?; cd ~ && rm -rf ~/sgn-seed; exit \$status"
+  bash seed/run.sh --formasi </dev/null && cd ~ && rm -rf ~/sgn-seed" || {
+  echo; echo "Seed stopped (see the error above). Run the same command again once fixed: the 290 MB stays on the server." >&2
+  exit 1
+}
 
 echo
 echo "Done. In RunCloud, restart the hr-worker container so HR picks up the staff now."
