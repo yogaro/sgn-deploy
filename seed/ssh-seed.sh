@@ -26,6 +26,7 @@ COPYFILE_DISABLE=1 tar -czf - --exclude '.DS_Store' --exclude 'seed/backup' --ex
 
 echo "Running the seed on the server..."
 "${SSH[@]}" "$DEST" "cd ~/sgn-seed && \
+  find seed -name '*.sh' -exec sed -i 's/\r\$//' {} + && \
   $(cat <<'NODE'
 if ! command -v node >/dev/null || [ "$(node -p 'process.versions.node.split(".")[0]')" -lt 20 ]; then
   echo "node 20+ not on the server: using node:22-alpine in docker"
