@@ -39,26 +39,49 @@ if [[ -n "$ASSETS" || ! -f seed/assets/media.json ]]; then
   node seed/gen/assets.mjs
 fi
 
-echo "1/7 Directory"
-if [[ -n "$FORMASI" ]]; then node seed/gen/directory-formasi.mjs; else node seed/gen/directory.mjs; fi
-psql -d db_directory < seed/sql/10_directory.sql
-echo "2/7 IAM sync"
-if [[ -n "${SEED_IAM_CONTAINER:-}" ]]; then docker exec "$SEED_IAM_CONTAINER" sgn-start run sync --full
-else docker compose run --rm iam sync --full; fi
-echo "3/7 IAM roles and demo password"
-if [[ -n "$FORMASI" ]]; then node seed/gen/iam-formasi.mjs; else node seed/gen/iam.mjs; fi
-psql -d db_iam < seed/sql/20_iam_roles.sql
-echo "4/7 LMS sync"
-LOGIN_BODY=$(python3 -c 'import json,os;print(json.dumps({"login_id":os.environ["SEED_ADMIN_LOGIN"],"password":os.environ["DEMO_PASSWORD"]}))')
-until TOKEN=$(curl -sf -X POST "$LMS_BASE/api/iam/v1/auth/login" -H 'content-type: application/json' \
-    -d "$LOGIN_BODY" | python3 -c 'import sys,json;print(json.load(sys.stdin)["access_token"])'); do sleep 5; done
-curl -sf -X POST "$LMS_BASE/api/lms/v1/admin/sync/iam" -H "authorization: Bearer $TOKEN"; echo
-echo "5/7 Media"
-[[ -f seed/assets/media.json ]] && node seed/gen/upload.mjs
-echo "6/7 LMS demo data"
-node seed/gen/lms.mjs ${FORMASI:+--formasi}
-psql -d db_lms < seed/sql/01_reset_lms_domain.sql
-psql -d db_lms < seed/sql/30_lms.sql
-echo "7/7 Banner Beranda"
-node seed/gen/banners.mjs
+# SEED_FROM=N resumes at step N after a failure, skipping the steps that already went through.
+from() { [[ $1 -ge ${SEED_FROM:-1} ]]; }
+
+if from 1; then
+  echo "1/7 Directory"
+  if [[ -n "$FORMASI" ]]; then node seed/gen/directory-formasi.mjs; else node seed/gen/directory.mjs; fi
+  psql -d db_directory < seed/sql/10_directory.sql
+fi
+if from 2; then
+  echo "2/7 IAM sync"
+  if [[ -n "${SEED_IAM_CONTAINER:-}" ]]; then docker exec "$SEED_IAM_CONTAINER" sgn-start run sync --full
+  else docker compose run --rm iam sync --full; fi
+fi
+if from 3; then
+  echo "3/7 IAM roles and demo password"
+  if [[ -n "$FORMASI" ]]; then node seed/gen/iam-formasi.mjs; else node seed/gen/iam.mjs; fi
+  psql -d db_iam < seed/sql/20_iam_roles.sql
+fi
+if from 4; then
+  echo "4/7 LMS sync"
+  LOGIN_BODY=$(python3 -c 'import json,os;print(json.dumps({"login_id":os.environ["SEED_ADMIN_LOGIN"],"password":os.environ["DEMO_PASSWORD"]}))')
+  until TOKEN=$(curl -sf -X POST "$LMS_BASE/api/iam/v1/auth/login" -H 'content-type: application/json' \
+      -d "$LOGIN_BODY" | python3 -c 'import sys,json;print(json.load(sys.stdin)["access_token"])'); do sleep 5; done
+  curl -sf -X POST "$LMS_BASE/api/lms/v1/admin/sync/iam" -H "authorization: Bearer $TOKEN"; echo
+fi
+if from 5; then
+  echo "5/7 Media"
+  # upload.mjs reads the media table through files written here, so it needs no database access of its own.
+  media_sql="SELECT file_name FROM course.media WHERE status = 'READY' AND file_name LIKE 'demo-%'"
+  pg_exec -d db_lms -v ON_ERROR_STOP=1 -At -c "$media_sql" > seed/assets/.media-have
+  SEED_MEDIA_HAVE=seed/assets/.media-have node seed/gen/upload.mjs
+  pg_exec -d db_lms -v ON_ERROR_STOP=1 -At -c "SELECT file_name, id, kind, coalesce(duration_s, 0) FROM course.media
+    WHERE status = 'READY' AND file_name LIKE 'demo-%'" > seed/assets/.media-rows
+  SEED_MEDIA_ROWS=seed/assets/.media-rows node seed/gen/upload.mjs --index
+fi
+if from 6; then
+  echo "6/7 LMS demo data"
+  node seed/gen/lms.mjs ${FORMASI:+--formasi}
+  psql -d db_lms < seed/sql/01_reset_lms_domain.sql
+  psql -d db_lms < seed/sql/30_lms.sql
+fi
+if from 7; then
+  echo "7/7 Banner Beranda"
+  node seed/gen/banners.mjs
+fi
 echo "Done. Log in at $LMS_BASE/lms/ - accounts are listed in seed/README.md"

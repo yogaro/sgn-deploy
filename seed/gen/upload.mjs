@@ -10,6 +10,28 @@ const manifest = JSON.parse(readFileSync(`${root}assets/manifest.json`, 'utf8'))
 // The stored file name; `name` stands in for a file kept in a sub-folder of assets.
 const stored = (m) => `demo-${m.name ?? m.file}`
 const psql = (sql) => execFileSync('docker', ['compose', 'exec', '-T', 'postgres', 'psql', '-U', 'sgn', '-d', 'db_lms', '-At', '-c', sql], { cwd: `${root}..`, encoding: 'utf8' })
+// seed/run.sh hands the query results over as files (SEED_MEDIA_HAVE, SEED_MEDIA_ROWS) when node runs without docker.
+const query = (env, sql) => (process.env[env] ? readFileSync(process.env[env], 'utf8') : psql(sql))
+const listSql = "SELECT file_name FROM course.media WHERE status = 'READY' AND file_name LIKE 'demo-%'"
+const rowsSql = "SELECT file_name, id, kind, coalesce(duration_s, 0) FROM course.media WHERE status = 'READY' AND file_name LIKE 'demo-%'"
+
+// --index writes media.json from SEED_MEDIA_ROWS only; the uploads ran in an earlier call.
+function writeIndex() {
+  const rows = query('SEED_MEDIA_ROWS', rowsSql).split('\n').filter(Boolean)
+  const byName = new Map(rows.map((r) => r.split('|')).map(([n, id, kind, d]) => [n, { id: Number(id), kind, duration: Number(d) }]))
+  const media = {}
+  for (const m of manifest) {
+    const row = byName.get(stored(m))
+    if (!row) throw new Error(`missing ${m.file}`)
+    media[m.key] = row
+  }
+  writeFileSync(`${root}assets/media.json`, JSON.stringify(media, null, 1))
+  console.log(`media.json: ${Object.keys(media).length} entries`)
+}
+if (process.argv.includes('--index')) {
+  writeIndex()
+  process.exit(0)
+}
 
 let token = ''
 async function login() {
@@ -24,7 +46,7 @@ async function api(path, init = {}, retry = true) {
 }
 
 await login()
-const have = new Set(psql("SELECT file_name FROM course.media WHERE status = 'READY' AND file_name LIKE 'demo-%'").split('\n').filter(Boolean))
+const have = new Set(query('SEED_MEDIA_HAVE', listSql).split('\n').filter(Boolean))
 const todo = manifest.filter((m) => !have.has(stored(m)))
 console.log(`${manifest.length} assets, ${todo.length} to upload`)
 let done = 0
@@ -43,13 +65,5 @@ async function one(m) {
 const queue = [...todo]
 await Promise.all(Array.from({ length: 4 }, async () => { for (let m; (m = queue.shift()); ) await one(m) }))
 
-const rows = psql("SELECT file_name, id, kind, coalesce(duration_s, 0) FROM course.media WHERE status = 'READY' AND file_name LIKE 'demo-%'").split('\n').filter(Boolean)
-const byName = new Map(rows.map((r) => r.split('|')).map(([n, id, kind, d]) => [n, { id: Number(id), kind, duration: Number(d) }]))
-const media = {}
-for (const m of manifest) {
-  const row = byName.get(stored(m))
-  if (!row) throw new Error(`missing ${m.file}`)
-  media[m.key] = row
-}
-writeFileSync(`${root}assets/media.json`, JSON.stringify(media, null, 1))
-console.log(`media.json: ${Object.keys(media).length} entries`)
+// With SEED_MEDIA_HAVE the caller writes the index next (--index), once the uploads are in the database.
+if (!process.env.SEED_MEDIA_HAVE) writeIndex()

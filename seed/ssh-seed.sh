@@ -4,7 +4,8 @@
 # Needs here: ssh access, seed/data/private/ and seed/assets/ (sgn-seed-data.tar.gz). Needs there: docker, node 20+,
 # python3, curl. The staff list and media (~290 MB) are sent once and kept on the server until a run succeeds, so a
 # retry only sends the scripts; after a successful run the copy is removed.
-# Usage: SEED_PASSWORD='…' [SEED_MUST_CHANGE=0] [SSH_PORT=22] seed/ssh-seed.sh user@server https://lms.example.co.id
+# Usage: SEED_PASSWORD='…' [SEED_MUST_CHANGE=0] [SEED_FROM=5] [SSH_PORT=22] seed/ssh-seed.sh user@server https://lms.example.co.id
+#   SEED_FROM resumes at that step after a failed run (the steps before it already went through).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 DEST=${1:?usage: SEED_PASSWORD=… seed/ssh-seed.sh user@server https://lms-domain}
@@ -42,6 +43,7 @@ if ! command -v node >/dev/null || [ "$(node -p 'process.versions.node.split("."
   printf '%s\n' '#!/bin/sh' \
     'exec docker run --rm -i -u "$(id -u):$(id -g)" -v "$HOME/sgn-seed:$HOME/sgn-seed" -w "$PWD" \' \
     '  -e LMS_BASE -e DEMO_PASSWORD -e SEED_ADMIN_LOGIN -e SEED_ADMIN_EMAIL -e SEED_PASSWORD_HASH -e SEED_MUST_CHANGE \' \
+    '  -e SEED_MEDIA_HAVE -e SEED_MEDIA_ROWS \' \
     '  node:22-alpine node "$@"' > bin/node
   chmod +x bin/node
   export PATH="$PWD/bin:$PATH"
@@ -50,7 +52,8 @@ NODE
 ) && \
   export SEED_PG_CONTAINER=\$(docker ps --format '{{.Names}}' | grep sgn-postgres | head -1) \
          SEED_IAM_CONTAINER=\$(docker ps --format '{{.Names}}' | grep sgn-stack-iam | head -1) \
-         LMS_BASE=$(printf %q "$LMS_BASE") SEED_PASSWORD=$(printf %q "$SEED_PASSWORD") SEED_MUST_CHANGE=$(printf %q "$MUST") && \
+         LMS_BASE=$(printf %q "$LMS_BASE") SEED_PASSWORD=$(printf %q "$SEED_PASSWORD") SEED_MUST_CHANGE=$(printf %q "$MUST") \
+         SEED_FROM=$(printf %q "${SEED_FROM:-1}") && \
   echo \"containers: \$SEED_PG_CONTAINER / \$SEED_IAM_CONTAINER\" && \
   bash seed/run.sh --formasi </dev/null && cd ~ && rm -rf ~/sgn-seed" || {
   echo; echo "Seed stopped (see the error above). Run the same command again once fixed: the 290 MB stays on the server." >&2
