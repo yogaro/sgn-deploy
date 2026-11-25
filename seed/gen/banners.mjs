@@ -56,7 +56,8 @@ if (!todo.length) {
   process.exit(0)
 }
 
-if (todo.some((s) => s.kind === 'IMAGE')) {
+// The browser only draws images that are not on disk yet, so a copied seed/assets/banners needs no Playwright.
+if (todo.some((s) => s.kind === 'IMAGE' && !existsSync(`${out}${s.key}.jpg`))) {
   const { chromium } = createRequire(`${root}sgn-lms-fe/package.json`)('playwright')
   const browser = await chromium.launch()
   const page = await browser.newPage({ viewport: { width: 1600, height: 700 } })
