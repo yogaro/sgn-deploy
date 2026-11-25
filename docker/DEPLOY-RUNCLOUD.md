@@ -94,8 +94,15 @@ Stack Name: `sgn` → **Deploy Stacks**. Urutan start tidak perlu diatur; setiap
 
 Log `iam` memuat `bootstrap ok: …`. Postgres membuat 4 database dan skema Directory hanya saat volume masih kosong.
 
-Kalau RunCloud ternyata memberi hostname lain (bukan nama container), set env per container sesuai hostname yang
-didapat:
+`sgn-postgres` membuat 4 database dan menerapkan migrasi Directory yang belum tercatat **setiap start**
+(`docker/postgres/ensure.sh`), jadi volume yang persiapan pertamanya terputus akan lengkap sendiri pada start berikutnya.
+Untuk container ini pasang Readiness Health Check `pg_isready -U sgn -d db_directory` (Start Period 180).
+
+Hostname antar-container = nama service di manifest (Deployments → View Details). Kalau namanya bukan nama di tabel
+(mis. `sgn-postgres`, `sgn-stack-iam`, `rustfs`), tambahkan ke env stack:
+`PGHOST`, `IAM_URL`, `LMS_URL`, `HR_URL`, `S3_ENDPOINT`, `DIRECTORY_INTERNAL_URL`, `IAM_UPSTREAM`, `LMS_UPSTREAM`,
+`HR_UPSTREAM`, `S3_UPSTREAM`, `DIRECTORY_UPSTREAM` (format `http://<nama>:<port>`, `PGHOST` hanya nama).
+Variabel yang sama per kelompok:
 - backend: `PGHOST`, `IAM_URL`, `S3_ENDPOINT`, `DIRECTORY_INTERNAL_URL`, `HR_URL`, `LMS_URL`;
 - frontend: `IAM_UPSTREAM`, `HR_UPSTREAM`, `LMS_UPSTREAM`, `S3_UPSTREAM`, `DIRECTORY_UPSTREAM`.
 
