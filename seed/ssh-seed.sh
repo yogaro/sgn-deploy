@@ -17,8 +17,7 @@ done
 
 echo "Checking the server..."
 "${SSH[@]}" "$DEST" 'set -e
-  for t in docker node python3 curl; do command -v $t >/dev/null || { echo "missing on server: $t" >&2; exit 1; }; done
-  [ "$(node -p "process.versions.node.split(\".\")[0]")" -ge 20 ] || { echo "node 20+ needed on server" >&2; exit 1; }
+  for t in docker python3 curl; do command -v $t >/dev/null || { echo "missing on server: $t" >&2; exit 1; }; done
   docker ps --format "{{.Names}}" | grep -q sgn-postgres || { echo "no sgn-postgres container (or no docker access)" >&2; exit 1; }'
 
 echo "Copying the seed to the server (about 290 MB)..."
@@ -27,6 +26,19 @@ COPYFILE_DISABLE=1 tar -czf - --exclude '.DS_Store' --exclude 'seed/backup' --ex
 
 echo "Running the seed on the server..."
 "${SSH[@]}" "$DEST" "cd ~/sgn-seed && \
+  $(cat <<'NODE'
+if ! command -v node >/dev/null || [ "$(node -p 'process.versions.node.split(".")[0]')" -lt 20 ]; then
+  echo "node 20+ not on the server: using node:22-alpine in docker"
+  mkdir -p bin
+  printf '%s\n' '#!/bin/sh' \
+    'exec docker run --rm -i -u "$(id -u):$(id -g)" -v "$HOME/sgn-seed:$HOME/sgn-seed" -w "$PWD" \' \
+    '  -e LMS_BASE -e DEMO_PASSWORD -e SEED_ADMIN_LOGIN -e SEED_ADMIN_EMAIL -e SEED_PASSWORD_HASH -e SEED_MUST_CHANGE \' \
+    '  node:22-alpine node "$@"' > bin/node
+  chmod +x bin/node
+  export PATH="$PWD/bin:$PATH"
+fi
+NODE
+) && \
   export SEED_PG_CONTAINER=\$(docker ps --format '{{.Names}}' | grep sgn-postgres | head -1) \
          SEED_IAM_CONTAINER=\$(docker ps --format '{{.Names}}' | grep sgn-stack-iam | head -1) \
          LMS_BASE=$(printf %q "$LMS_BASE") SEED_PASSWORD=$(printf %q "$SEED_PASSWORD") SEED_MUST_CHANGE=$(printf %q "$MUST") && \
