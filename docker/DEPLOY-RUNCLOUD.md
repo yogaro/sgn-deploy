@@ -123,6 +123,19 @@ SEED_PASSWORD='…' SEED_MUST_CHANGE=1 seed/run.sh --formasi
 Setelah itu restart container `hr-worker` dari dasbor RunCloud, agar HR langsung sinkron dari IAM (kalau tidak,
 menunggu sampai 1 jam). Akun hasil seed: `DEPLOY-VPS.md` → Seed.
 
+### Tanpa SSH
+
+`seed/remote.sh` menjalankan seed dari mesin yang punya `seed/data/private/` dan `seed/assets/`:
+- sinkron IAM/LMS, media, dan banner lewat API domain LMS;
+- file SQL diimpor lewat Adminer (container `adminer:5` sementara di stack: domain + HTTPS, IP Allowlist, Site
+  Authentication; server `sgn-postgres`, user `sgn`). Skrip berhenti di tiap impor.
+
+```bash
+LMS_BASE=https://sugarledge.sgn.co.id SEED_PASSWORD='…' ADMIN_LOGIN=SUPERADMIN ADMIN_PASSWORD='…' seed/remote.sh
+```
+
+Hapus container `adminer` setelah selesai.
+
 ## 6. Backup
 
 RunCloud belum punya backup untuk stack. Jalankan dari host (cron):
