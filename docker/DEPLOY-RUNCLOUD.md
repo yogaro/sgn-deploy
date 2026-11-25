@@ -6,6 +6,48 @@ setiap image membaca **Stack Environment Variables** yang sama, menurunkan penga
 (`docker/stack/entrypoint.sh`), menunggu dependensinya, dan menjalankan migrasi sebelum server. Bootstrap (superadmin
 IAM, klien layanan, kunci Directory, login Directory) dijalankan container `iam` setiap start.
 
+## LMS saja: 5 container (PO 2026-11-25)
+
+Portal, Directory, dan HR belum dinaikkan. Data karyawan, unit, dan jabatan dikelola Super Admin di LMS (menu **Data
+karyawan**, **Unit & jabatan**, dan panel **Peran** di Akun karyawan), dan sumbernya IAM.
+
+| Container | Image | Volume | Domain → port |
+| --- | --- | --- | --- |
+| `sgn-postgres` | `sgn-postgres` | `sgn-pgdata` → `/var/lib/postgresql/data` | — |
+| `rustfs` | `rustfs/rustfs:1.0.0` | `sgn-s3data` → `/data` | — |
+| `sgn-stack-iam` | `sgn-stack-iam` | — | — (port 8081) |
+| `sgn-stack-lms` | `sgn-stack-lms` | — | — (port 8083) |
+| `sgn-lms-fe` | `sgn-lms-fe` | — | `LMS_DOMAIN` → 80, HTTPS |
+
+Env stack, dibanding daftar 11 container di bawah:
+- **tambah** `RUN_WORKER=true` (worker LMS berjalan di dalam `sgn-stack-lms`);
+- **hapus** `DIRECTORY_INTERNAL_URL`, `DIRECTORY_SERVICE_KEY`, `DIRECTORY_ADMIN_EMAIL`, `DIRECTORY_ADMIN_PASSWORD`,
+  `HR_IAM_CLIENT_SECRET`, `HR_URL`, `HR_UPSTREAM`, `DIRECTORY_UPSTREAM`. Tanpa alamat Directory, sinkron Directory
+  di IAM mati (409 `SYNC_DISABLED`), jadi tidak menimpa perubahan dari LMS;
+- `PORTAL_DOMAIN` tetap diisi (origin IAM), boleh nama domain yang direncanakan;
+- nama container tetap lewat `PGHOST`, `IAM_URL`, `LMS_URL`, `S3_ENDPOINT`, `IAM_UPSTREAM`, `LMS_UPSTREAM`,
+  `S3_UPSTREAM` bila RunCloud memberi nama selain bawaan.
+
+### Pindah dari 11 container ke 5 (data tetap)
+
+1. Push repo `sgn-iam-contracts`, `sgn-iam-be`, `sgn-lms-be`, `sgn-lms-fe`, `sgn-deploy`, lalu Actions → **images**.
+   Catat nomor run.
+2. Env stack: tambah `RUN_WORKER=true`, hapus variabel di daftar "hapus" di atas.
+3. Ganti image `sgn-stack-iam`, `sgn-stack-lms`, `sgn-lms-fe` ke tag `run-<nomor>`.
+4. Hapus container `sgn-stack-lms-worker`, `sgn-stack-hr`, `sgn-stack-hr-worker`, `sgn-portal`, `sgn-stack-directory-fe`,
+   `sgn-stack-directory`. **Jangan** hapus volume `sgn-pgdata`/`sgn-s3data`; database `db_hr` dan `db_directory` tetap
+   tersimpan di Postgres untuk nanti.
+5. Redeploy. Cek log `sgn-stack-iam` (`applied 0012_org_write_permissions.sql`, `bootstrap ok: …`) dan
+   `sgn-stack-lms` (`worker started`).
+6. Super Admin **keluar lalu masuk lagi**: izin baru (`iam.org.write`, `iam.employees.write`) baru ada di token setelah
+   masuk ulang. Menu **Data karyawan** dan **Unit & jabatan** muncul di grup Pengaturan.
+
+### Seed di stack 5 container
+
+`seed/run.sh` mengisi karyawan lewat Directory lalu sinkron ke IAM, jadi untuk server **baru** jalankan seed dulu dengan
+container `sgn-stack-directory` (dan `DIRECTORY_INTERNAL_URL`, `DIRECTORY_SERVICE_KEY`) terpasang, lalu lepas keduanya
+seperti langkah 2–4 di atas. Server yang sudah di-seed tidak perlu apa-apa: datanya sudah ada di IAM.
+
 ## 1. Image
 
 Sama dengan `DEPLOY-STACK.md` langkah 1: secret `REPOS_READ_TOKEN` di `sgn-deploy`, lalu Actions → **images** → Run

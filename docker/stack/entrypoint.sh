@@ -23,7 +23,8 @@ retry() {
 case "$SGN_SERVICE" in
   iam)
     export DATABASE_URL=$(db_url db_iam) ALLOWED_ORIGIN=https://${PORTAL_DOMAIN:?set PORTAL_DOMAIN} COOKIE_SECURE=true
-    export SIGNING_KEY_ID=${SIGNING_KEY_ID:-1} DIRECTORY_INTERNAL_URL=${DIRECTORY_INTERNAL_URL:-http://directory:8080}
+    # No Directory URL (LMS-only stack): IAM owns the organisation and its Directory sync answers SYNC_DISABLED.
+    export SIGNING_KEY_ID=${SIGNING_KEY_ID:-1} DIRECTORY_INTERNAL_URL=${DIRECTORY_INTERNAL_URL:-}
     # The key comes from a mounted secret (SIGNING_KEY_PATH) or from IAM_SIGNING_KEY, written to a private file.
     if [ -z "${SIGNING_KEY_PATH:-}" ]; then
       umask 077
@@ -37,6 +38,7 @@ case "$SGN_SERVICE" in
     export S3_BUCKET=hr-files IAM_SYNC_INTERVAL=${IAM_SYNC_INTERVAL:-1h}
     ;;
   lms)
+    # RUN_WORKER=true (stack env) runs the background jobs inside the server, so no lms-worker container is needed.
     export DATABASE_URL=$(db_url db_lms) IAM_BASE_URL=$IAM_URL IAM_CLIENT_ID=svc-sgn-lms-service
     export IAM_CLIENT_SECRET=${LMS_IAM_CLIENT_SECRET:?set LMS_IAM_CLIENT_SECRET}
     # ALLOWED_ORIGIN is also the address printed on certificate PDFs; S3_PUBLIC_URL is the host media URLs are signed for.
