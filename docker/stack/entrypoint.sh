@@ -62,8 +62,9 @@ case "$SGN_SERVICE:$role" in
     retry migrate
     exec server
     ;;
-  hr:worker) wait_http "${HR_URL:-http://hr:8082}/healthz"; exec worker ;;
-  lms:worker) wait_http "${LMS_URL:-http://lms:8083}/healthz"; exec worker ;;
+  # Workers serve /metrics on :9091 so the stack has a port to point at (RunCloud requires one per container).
+  hr:worker) wait_http "${HR_URL:-http://hr:8082}/healthz"; export METRICS_ADDR=${METRICS_ADDR:-:9091}; exec worker ;;
+  lms:worker) wait_http "${LMS_URL:-http://lms:8083}/healthz"; export METRICS_ADDR=${METRICS_ADDR:-:9091}; exec worker ;;
   directory:server) exec server ;;
   *) echo "unknown role $role for $SGN_SERVICE" >&2; exit 1 ;;
 esac

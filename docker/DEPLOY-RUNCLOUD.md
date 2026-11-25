@@ -72,6 +72,21 @@ Nama container dipakai sebagai hostname antar-container; ketik **persis** sepert
 | `lms-fe` | `sgn-lms-fe` | — | `LMS_DOMAIN` → 80 |
 | `directory-fe` | `sgn-stack-directory-fe` | — | `DIRECTORY_DOMAIN` → 80 |
 
+RunCloud mewajibkan port per container. Container tanpa domain di tabel diisi port yang didengarkannya, dan dikunci
+dengan **IP Allowlist** `127.0.0.1` supaya domain sementara yang dibuat RunCloud tidak bisa dibuka dari internet
+(lalu lintas antar-container tidak lewat proxy, jadi tidak terpengaruh):
+
+| Nama | Port |
+| --- | --- |
+| `postgres` | 5432 |
+| `s3` | 9000 |
+| `iam` | 8081 |
+| `directory` | 8080 |
+| `hr` | 8082 |
+| `lms` | 8083 |
+| `hr-worker`, `lms-worker` | 9091 (metrics) |
+| `portal`, `lms-fe`, `directory-fe` | 80 (dengan domain dan HTTPS, tanpa allowlist) |
+
 Stack Name: `sgn` → **Deploy Stacks**. Urutan start tidak perlu diatur; setiap container menunggu sendiri:
 - `iam`: migrasi → bootstrap → server;
 - `hr`/`lms`: tunggu `iam` sehat → migrasi → server;
