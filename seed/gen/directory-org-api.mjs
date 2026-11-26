@@ -68,7 +68,64 @@ const people = read('people')
 const errors = []
 const plan = { unitsCreated: 0, unitsChanged: 0, rootOff: 0, positionsCreated: 0, assignmentsCreated: 0, alreadyPlaced: 0, usersMissing: 0 }
 
+let token = ''
+async function lmsLogin() {
+  const res = await fetch(`${BASE}/api/iam/v1/auth/login`, {
+    method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ login_id: env('LOGIN'), password: process.env.PASSWORD }),
+  })
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(`LMS login as ${process.env.LOGIN} ${res.status}: ${body.error?.message ?? ''}`)
+  token = body.access_token
+}
+const lms = (method, path) => call(method, `${BASE}${path}`, null, () => ({ authorization: `Bearer ${token}` }), lmsLogin)
+
+// Both sign-ins first, so a wrong password stops the run before anything is read or written.
 await dirLogin()
+await lmsLogin()
+
+// --sync: copy the placements to IAM in batches. A full IAM sync of every employee outlasts the proxy timeout (504), and
+// a placement alone does not mark the person as changed, so each batch re-imports the people's own profile values (which
+// only marks them changed) and then runs an incremental IAM sync of just them. LMS picks the change up in its hourly sync.
+if (process.argv.includes('--sync')) {
+  const BATCH = 1000
+  const runs = await lms('GET', '/api/iam/v1/sync/runs?page=1')
+  for (const r of (runs.items ?? []).slice(0, 3)) console.log(`  last IAM sync: ${r.status} ${r.trigger} ${r.started_at} ${JSON.stringify(r.stats ?? {})}`)
+  const wanted = new Set(people.map((p) => p.pn))
+  const users = new Map()
+  const first = await dir('GET', '/users?limit=100&page=1')
+  const pages = Math.ceil(first.total / first.limit)
+  const keep = (list) => { for (const u of list) if (wanted.has(u.employeeNumber)) users.set(u.employeeNumber, u) }
+  keep(first.data)
+  await pool(Array.from({ length: pages - 1 }, (_, i) => i + 2), 6, async (page) => keep((await dir('GET', `/users?limit=100&page=${page}`)).data))
+  for (const p of people.filter((x) => !users.has(x.pn))) {
+    const hit = (await dir('GET', `/users?limit=100&search=${encodeURIComponent(p.pn)}`)).data.find((u) => u.employeeNumber === p.pn)
+    if (hit) users.set(p.pn, hit)
+  }
+  const list = [...users.values()]
+  console.log(`${list.length} employees to sync in batches of ${BATCH}`)
+  for (let i = 0; i < list.length; i += BATCH) {
+    const batch = list.slice(i, i + BATCH)
+    try {
+      await dir('POST', '/users/profile-import', { rows: batch.map((u) => ({
+        employeeNumber: u.employeeNumber, functionName: u.function?.name ?? null, educationLevel: u.educationLevel ?? null,
+        educationMajor: u.educationMajor ?? null, birthDate: u.birthDate ?? null,
+      })) })
+      const t = Date.now()
+      const stats = await lms('POST', '/api/iam/v1/sync/directory')
+      console.log(`  ${Math.min(i + BATCH, list.length)}/${list.length}: ${JSON.stringify(stats)} ${Math.round((Date.now() - t) / 1000)}s`)
+    } catch (err) {
+      errors.push(`batch ${i / BATCH + 1}: ${err.message}`)
+      console.log(`  batch ${i / BATCH + 1} failed: ${err.message.slice(0, 200)}`)
+      if (err.status === 504) break
+    }
+  }
+  try { console.log('LMS sync:', JSON.stringify(await lms('POST', '/api/lms/v1/admin/sync/iam'))) }
+  catch (err) { console.log(`LMS sync ${err.status ?? ''}: LMS copies the change in its hourly sync, or run Sync sekarang on /lms/admin/sync later.`) }
+  if (errors.length) { console.log(`\n${errors.length} batch errors; run --sync again.`); process.exitCode = 1 } else console.log('\nDone.')
+  process.exit()
+}
+
 console.log(`${APPLY ? 'APPLY' : 'DRY RUN (nothing is written; add --apply)'}: Directory ${DIR}, LMS ${BASE}`)
 
 // 1. Units
@@ -192,18 +249,6 @@ if (!APPLY) {
 }
 
 // 4 and 5. IAM copies Directory in full (new placements do not mark the person as changed), then LMS copies IAM.
-let token = ''
-async function lmsLogin() {
-  const res = await fetch(`${BASE}/api/iam/v1/auth/login`, {
-    method: 'POST', headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ login_id: env('LOGIN'), password: process.env.PASSWORD }),
-  })
-  const body = await res.json().catch(() => ({}))
-  if (!res.ok) throw new Error(`login ${res.status}: ${body.error?.message ?? ''}`)
-  token = body.access_token
-}
-const lms = (method, path) => call(method, `${BASE}${path}`, null, () => ({ authorization: `Bearer ${token}` }), lmsLogin)
-await lmsLogin()
 if (APPLY) {
   console.log('4/5 IAM sync (full; can take a few minutes)')
   const t = Date.now()
