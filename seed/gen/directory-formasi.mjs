@@ -190,6 +190,8 @@ WHERE NOT EXISTS (SELECT 1 FROM user_assignments a WHERE a.user_id = u.id AND a.
 sql.push(`UPDATE user_assignments a SET is_department_head = fu.head FROM users u, fu WHERE a.user_id = u.id AND u.employee_number = fu.pn;`)
 sql.push('COMMIT;')
 writeFileSync(`${here}sql/10_directory.sql`, `${sql.join('\n')}\n`)
+// The whole tree, parents first, for seed/gen/iam-org-api.mjs (the same organisation written through IAM's API).
+writeFileSync(`${here}data/private/units.json`, `${JSON.stringify([...units, ...fieldUnits].sort((a, b) => a.level - b.level))}\n`)
 writeFileSync(`${here}data/private/positions.json`, `${JSON.stringify(positions)}\n`)
 writeFileSync(`${here}data/private/people.json`, `${JSON.stringify(people.map((p) => ({ pn: p.pn, email: p.email, position: p.position.code, unit: p.position.unit, head: p.head })))}\n`)
 const headless = [...byUnit.keys()].filter((u) => !heads.has(u))

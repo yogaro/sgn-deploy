@@ -48,6 +48,11 @@ Env stack, dibanding daftar 11 container di bawah:
 container `sgn-stack-directory` (dan `DIRECTORY_INTERNAL_URL`, `DIRECTORY_SERVICE_KEY`) terpasang, lalu lepas keduanya
 seperti langkah 2–4 di atas. Server yang sudah di-seed tidak perlu apa-apa: datanya sudah ada di IAM.
 
+Membetulkan organisasi tanpa SSH (setelah image 5 container naik): `node seed/gen/directory-formasi.mjs`, lalu
+`BASE=https://$LMS_DOMAIN ADMIN_LOGIN=… ADMIN_PASSWORD='…' node seed/gen/iam-org-api.mjs` (uji coba, tidak menulis) dan
+ulangi dengan `--apply`. Lewat API IAM: membuat unit/jabatan yang belum ada, memindahkan karyawan yang unit/jabatannya
+beda, menonaktifkan unit lama `PTSGN-ROOT`, lalu sinkron LMS. Sandi, peran, dan progres belajar tidak tersentuh; aman diulang.
+
 ## 1. Image
 
 Sama dengan `DEPLOY-STACK.md` langkah 1: secret `REPOS_READ_TOKEN` di `sgn-deploy`, lalu Actions → **images** → Run
