@@ -88,7 +88,8 @@ await lmsLogin()
 // a placement alone does not mark the person as changed, so each batch re-imports the people's own profile values (which
 // only marks them changed) and then runs an incremental IAM sync of just them. LMS picks the change up in its hourly sync.
 if (process.argv.includes('--sync')) {
-  const BATCH = 1000
+  const BATCH = Number(process.env.SYNC_BATCH ?? 300)
+  const SYNC_FROM = Number(process.env.SYNC_FROM ?? 0)
   const runs = await lms('GET', '/api/iam/v1/sync/runs?page=1')
   for (const r of (runs.items ?? []).slice(0, 3)) console.log(`  last IAM sync: ${r.status} ${r.trigger} ${r.started_at} ${JSON.stringify(r.stats ?? {})}`)
   const wanted = new Set(people.map((p) => p.pn))
@@ -103,21 +104,47 @@ if (process.argv.includes('--sync')) {
     if (hit) users.set(p.pn, hit)
   }
   const list = [...users.values()]
-  console.log(`${list.length} employees to sync in batches of ${BATCH}`)
-  for (let i = 0; i < list.length; i += BATCH) {
+  // First an incremental sync that marks nobody new: it carries only what already changed since the last successful sync
+  // (the new units and positions, and anyone marked by an earlier try). Once it succeeds, every batch after it is small.
+  // 409 means IAM thinks a sync is running: an earlier run cut off by the proxy can leave its lock on a pooled database
+  // connection, so another try usually lands on a free one. Wait and try again before giving up.
+  const sync = async (label) => {
+    for (let attempt = 1; ; attempt++) {
+      const t = Date.now()
+      try {
+        const stats = await lms('POST', '/api/iam/v1/sync/directory')
+        console.log(`  ${label}: ${JSON.stringify(stats)} ${Math.round((Date.now() - t) / 1000)}s`)
+        return
+      } catch (err) {
+        if (err.status !== 409 || attempt >= 20) throw err
+        await new Promise((r) => setTimeout(r, 3000))
+      }
+    }
+  }
+  if (!SYNC_FROM) {
+    console.log('Units and positions first...')
+    try { await sync('units and positions') } catch (err) {
+      console.log(`  failed: ${err.message.slice(0, 120)}`)
+      console.log(err.status === 504
+        ? '\nThe new units and positions alone take longer than the proxy waits, so this route cannot finish over HTTPS.'
+        : '\nRun --sync again.')
+      process.exit(1)
+    }
+  }
+  console.log(`${list.length - SYNC_FROM} employees to sync in batches of ${BATCH}`)
+  for (let i = SYNC_FROM; i < list.length; i += BATCH) {
     const batch = list.slice(i, i + BATCH)
     try {
       await dir('POST', '/users/profile-import', { rows: batch.map((u) => ({
         employeeNumber: u.employeeNumber, functionName: u.function?.name ?? null, educationLevel: u.educationLevel ?? null,
         educationMajor: u.educationMajor ?? null, birthDate: u.birthDate ?? null,
       })) })
-      const t = Date.now()
-      const stats = await lms('POST', '/api/iam/v1/sync/directory')
-      console.log(`  ${Math.min(i + BATCH, list.length)}/${list.length}: ${JSON.stringify(stats)} ${Math.round((Date.now() - t) / 1000)}s`)
+      await sync(`${Math.min(i + BATCH, list.length)}/${list.length}`)
     } catch (err) {
-      errors.push(`batch ${i / BATCH + 1}: ${err.message}`)
-      console.log(`  batch ${i / BATCH + 1} failed: ${err.message.slice(0, 200)}`)
-      if (err.status === 504) break
+      errors.push(`batch from ${i}: ${err.message}`)
+      console.log(`  batch from ${i} failed: ${err.message.slice(0, 120)}`)
+      console.log(`  continue later with: SYNC_FROM=${i} SYNC_BATCH=${Math.max(50, Math.floor(BATCH / 2))} node seed/gen/directory-org-api.mjs --sync`)
+      break
     }
   }
   try { console.log('LMS sync:', JSON.stringify(await lms('POST', '/api/lms/v1/admin/sync/iam'))) }
