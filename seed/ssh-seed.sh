@@ -6,14 +6,18 @@
 # retry only sends the scripts; after a successful run the copy is removed.
 # Usage: SEED_PASSWORD='…' [SEED_MUST_CHANGE=0] [SEED_FROM=5] [SSH_PORT=22] seed/ssh-seed.sh user@server https://lms.example.co.id
 #   SEED_FROM resumes at that step after a failed run (the steps before it already went through).
+#   SEED_ORG=1 loads only the organisation (run.sh --org): sends just seed/data (a few MB) and keeps passwords and progress.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 DEST=${1:?usage: SEED_PASSWORD=… seed/ssh-seed.sh user@server https://lms-domain}
 LMS_BASE=${2:?give the LMS address, e.g. https://sugarledge.example.co.id}
 : "${SEED_PASSWORD:?set SEED_PASSWORD (first password of every seeded account)}"
 MUST=${SEED_MUST_CHANGE:-1}
+ORG=${SEED_ORG:-}
 SSH=(ssh -p "${SSH_PORT:-22}" -o ServerAliveInterval=30)
-for f in seed/data/private/formasi.json seed/assets/media.json "Trailer Sugartime.mp4"; do
+need=(seed/data/private/formasi.json)
+[[ -n "$ORG" ]] || need+=(seed/assets/media.json "Trailer Sugartime.mp4")
+for f in "${need[@]}"; do
   [[ -f "$f" ]] || { echo "missing $f: extract sgn-seed-data.tar.gz into this folder first" >&2; exit 1; }
 done
 
@@ -23,7 +27,11 @@ HAVE_DATA=$("${SSH[@]}" "$DEST" 'set -e
   docker ps --format "{{.Names}}" | grep -q sgn-postgres || { echo "no sgn-postgres container (or no docker access)" >&2; exit 1; }
   [ -f ~/sgn-seed/.data-copied ] && echo yes || echo no')
 
-if [[ "$HAVE_DATA" == yes ]]; then
+if [[ -n "$ORG" ]]; then
+  echo "Copying the staff list to the server..."
+  COPYFILE_DISABLE=1 tar -czf - --exclude '.DS_Store' seed/data |
+    "${SSH[@]}" "$DEST" 'rm -rf ~/sgn-seed && mkdir -p ~/sgn-seed && tar -xzf - -C ~/sgn-seed'
+elif [[ "$HAVE_DATA" == yes ]]; then
   echo "Staff list and media already on the server from the last try: not sending them again."
 else
   echo "Copying the staff list and media to the server (about 290 MB, no progress shown)..."
@@ -55,7 +63,7 @@ NODE
          LMS_BASE=$(printf %q "$LMS_BASE") SEED_PASSWORD=$(printf %q "$SEED_PASSWORD") SEED_MUST_CHANGE=$(printf %q "$MUST") \
          SEED_FROM=$(printf %q "${SEED_FROM:-1}") && \
   echo \"containers: \$SEED_PG_CONTAINER / \$SEED_IAM_CONTAINER\" && \
-  bash seed/run.sh --formasi </dev/null && cd ~ && rm -rf ~/sgn-seed" || {
+  bash seed/run.sh --formasi ${ORG:+--org} </dev/null && cd ~ && rm -rf ~/sgn-seed" || {
   echo; echo "Seed stopped (see the error above). Run the same command again once fixed: the 290 MB stays on the server." >&2
   exit 1
 }

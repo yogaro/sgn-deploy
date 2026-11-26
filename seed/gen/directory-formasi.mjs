@@ -2,19 +2,21 @@
 // replacing the made-up demo organisation (seed/gen/directory.mjs keeps building that one).
 // - Mills (PG), estates (Kebun) and clusters reuse the units already in Directory, matched through the explicit table below;
 //   their cluster parents come from the PO's list and are never guessed from a place name.
-// - Head-office units hang under a new "Head Office SGN"; head office and the clusters hang under one root unit.
+// - Head Office is the top unit (PT SGN itself is the instansi, not a unit): the head-office divisions and the clusters
+//   hang under it, and the mills and estates under their cluster. The old "PT Sinergi Gula Nusantara" root unit is switched off.
 // - One position per unit and job title; the unit's head is the lowest-level holder of a head title, else none.
 // - Every made-up PTSGN unit, position and person not used here is switched off (is_active = false), not deleted.
 // - One made-up account per pilot unit ("Peserta Demo SPI", "Peserta Demo Tekpol", ...) for recording the demo without
 //   showing a real name; each holds a staff post of its unit, so it receives that unit's pilot modules.
 // Run: node seed/gen/directory-formasi.mjs
 import { readFileSync, writeFileSync } from 'node:fs'
+import { clusters as orgClusters } from '../data/org.mjs'
 
 const here = new URL('..', import.meta.url).pathname
 const staff = JSON.parse(readFileSync(`${here}data/private/formasi.json`, 'utf8'))
 const q = (s) => (s == null ? 'NULL' : `'${String(s).replaceAll("'", "''")}'`)
 
-const ROOT = 'PTSGN-ROOT', HO = 'PTSGN-HO'
+const HO = 'PTSGN-HO'
 // FORMASI unit name -> existing Directory unit code (mills, estates, clusters).
 const existing = {
   'Cluster Sulawesi': 'PTSGN-CL-SUL', 'Cluster Sumatera 1': 'PTSGN-CL-SUM1', 'Cluster Sumatera 2': 'PTSGN-CL-SUM2',
@@ -72,14 +74,13 @@ const rank = (l) => (l == null ? 99 : l === 'BOC' ? 0 : levelOf(l))
 
 // Units
 const units = [] // {code, name, parent, level}
-units.push({ code: ROOT, name: 'PT Sinergi Gula Nusantara', parent: null, level: 1 })
-units.push({ code: HO, name: 'Head Office SGN', parent: ROOT, level: 2 })
-units.push({ code: MKSO, name: 'HO MKSO', parent: HO, level: 3 })
-for (const [, [code, name, parent]] of Object.entries(headOffice)) units.push({ code, name, parent: parent ?? HO, level: parent ? 4 : 3 })
+units.push({ code: HO, name: 'Head Office', parent: null, level: 1 })
+units.push({ code: MKSO, name: 'HO MKSO', parent: HO, level: 2 })
+for (const [, [code, name, parent]] of Object.entries(headOffice)) units.push({ code, name, parent: parent ?? HO, level: parent ? 3 : 2 })
 const unitCode = (name) => existing[name] ?? headOffice[name]?.[0]
 const missing = [...new Set(staff.map((s) => s.unit))].filter((u) => !unitCode(u))
 if (missing.length) throw new Error(`units without a match: ${missing.join(', ')}`)
-const usedUnits = new Set([ROOT, HO, MKSO, ...clusters, ...Object.values(headOffice).map((h) => h[0]), ...Object.values(existing)])
+const usedUnits = new Set([HO, MKSO, ...clusters, ...Object.values(headOffice).map((h) => h[0]), ...Object.values(existing)])
 
 // Positions: one per unit and title, ordered by level then title so codes stay the same between runs.
 const byUnit = new Map()
@@ -140,7 +141,23 @@ for (const u of units) {
 VALUES (gen_random_uuid(), ${q(u.code)}, ${q(u.name)}, (SELECT id FROM organization_units WHERE unit_code = ${q(u.parent)}), ${instansi}, ${u.level})
 ON CONFLICT (unit_code) DO UPDATE SET unit_name = EXCLUDED.unit_name, parent_unit_id = EXCLUDED.parent_unit_id, level = EXCLUDED.level, is_active = true;`)
 }
-sql.push(`UPDATE organization_units SET parent_unit_id = (SELECT id FROM organization_units WHERE unit_code = ${q(ROOT)}), level = 2, is_active = true WHERE unit_code IN (${clusters.map(q).join(', ')});`)
+// A fresh Directory has no clusters, mills or estates (they came from the old demo database), so create the missing ones;
+// existing rows keep their name and parent. Each mill's cluster is the PO's list in data/org.mjs.
+const clusterOf = new Map(orgClusters.flatMap((c) => c.pgs.map((p) => [`PTSGN-PG-${p.k}`, `PTSGN-CL-${c.code}`])))
+const fieldUnits = [
+  ...orgClusters.map((c) => ({ code: `PTSGN-CL-${c.code}`, name: c.name, parent: HO, level: 2 })),
+  ...Object.entries(existing).filter(([, code]) => !code.startsWith('PTSGN-CL-')).map(([name, code]) => {
+    const parent = code.startsWith('PTSGN-PG-') ? clusterOf.get(code) : code.replace(/^PTSGN-KB-(.+)-\d+$/, 'PTSGN-CL-$1')
+    if (!clusters.includes(parent)) throw new Error(`no cluster for ${name}`)
+    return { code, name, parent, level: 3 }
+  }),
+]
+for (const u of fieldUnits) {
+  sql.push(`INSERT INTO organization_units (id, unit_code, unit_name, parent_unit_id, instansi_id, level)
+VALUES (gen_random_uuid(), ${q(u.code)}, ${q(u.name)}, (SELECT id FROM organization_units WHERE unit_code = ${q(u.parent)}), ${instansi}, ${u.level})
+ON CONFLICT (unit_code) DO NOTHING;`)
+}
+sql.push(`UPDATE organization_units SET parent_unit_id = (SELECT id FROM organization_units WHERE unit_code = ${q(HO)}), level = 2, is_active = true WHERE unit_code IN (${clusters.map(q).join(', ')});`)
 sql.push(`UPDATE organization_units SET is_active = true WHERE unit_code IN (${Object.values(existing).map(q).join(', ')});`)
 
 // Positions go through a temp table: thousands of rows, one statement.

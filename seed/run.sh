@@ -6,6 +6,8 @@
 #   --formasi  builds the organisation from the real staff list (seed/data/private/formasi.json, see formasi-import.mjs) and
 #              loads the LMS clean, with no made-up history; without it the made-up demo organisation and history load.
 #   --assets   regenerates and uploads the media first; it is skipped when media.json exists.
+#   --org      only the organisation: Directory, IAM sync, LMS sync (steps 1, 2, 4). Passwords, roles, courses and
+#              learning progress are left as they are, so it is safe on a server already in use.
 #   SEED_PASSWORD     password of every seeded account (default: the local demo password); required with SEED_MUST_CHANGE.
 #   SEED_MUST_CHANGE  1 (with --formasi) makes employees change it at first login; the Admin L&D account keeps it, since the
 #                     seed signs in as it.
@@ -18,8 +20,8 @@ pg_exec() {
   else docker compose exec -T postgres psql -U sgn "$@"; fi
 }
 psql() { pg_exec -v ON_ERROR_STOP=1 -q "$@"; }
-FORMASI=""; ASSETS=""
-for a in "$@"; do [[ "$a" == "--formasi" ]] && FORMASI=1; [[ "$a" == "--assets" ]] && ASSETS=1; done
+FORMASI=""; ASSETS=""; ORG=""
+for a in "$@"; do [[ "$a" == "--formasi" ]] && FORMASI=1; [[ "$a" == "--assets" ]] && ASSETS=1; [[ "$a" == "--org" ]] && ORG=1; done
 if [[ -n "${SEED_MUST_CHANGE:-}" && -z "${SEED_PASSWORD:-}" ]]; then
   echo "SEED_MUST_CHANGE needs SEED_PASSWORD: the demo password is public." >&2; exit 1
 fi
@@ -35,12 +37,12 @@ export SEED_ADMIN_EMAIL=$([[ -n "$FORMASI" ]] && echo "admin.lms@sgn.example" ||
 # The sign-in name of that admin (fiktif seed: set SEED_ADMIN_LOGIN to the NIK of the employee above).
 export SEED_ADMIN_LOGIN=${SEED_ADMIN_LOGIN:-ADMIN-LMS}
 
-if [[ -n "$ASSETS" || ! -f seed/assets/media.json ]]; then
+if [[ -z "$ORG" ]] && [[ -n "$ASSETS" || ! -f seed/assets/media.json ]]; then
   node seed/gen/assets.mjs
 fi
 
 # SEED_FROM=N resumes at step N after a failure, skipping the steps that already went through.
-from() { [[ $1 -ge ${SEED_FROM:-1} ]]; }
+from() { [[ $1 -ge ${SEED_FROM:-1} ]] && { [[ -z "$ORG" ]] || [[ $1 == [124] ]]; }; }
 
 if from 1; then
   echo "1/7 Directory"
