@@ -153,6 +153,57 @@ if (process.argv.includes('--sync')) {
   process.exit()
 }
 
+// --cleanup: PT SGN (SGN0) is the only instansi; the units sit directly under it. Directory's migrations seeded sample
+// instansi (HO SGN, two clusters, two PG, two Kebun) and sample units (Direktorat Utama/Operasional with a TI tree) that
+// no real data uses. Switch them off: end their placements, then positions, units and instansi, children first.
+if (process.argv.includes('--cleanup')) {
+  console.log(`${APPLY ? 'APPLY' : 'DRY RUN (nothing is written; add --apply)'}: cleanup of the sample organisation`)
+  const today = new Date(Date.now() + 7 * 3600e3).toISOString().slice(0, 10)
+  const units = (await dir('GET', '/units/tree')).filter((u) => u.isActive && !u.unitCode.toUpperCase().startsWith('PTSGN-'))
+  const positions = [], placements = []
+  for (const u of units) {
+    for (const p of await dir('GET', `/units/${u.id}/positions`)) {
+      if (!p.isActive) continue
+      positions.push(p)
+      for (const a of await dir('GET', `/positions/${p.id}/assignments`)) if (!a.endDate) placements.push(a)
+    }
+  }
+  const instansi = (await dir('GET', '/instansi?limit=100')).data.filter((i) => i.isActive && i.instansiCode !== 'SGN0')
+  console.log(`Units: ${units.map((u) => `${u.unitCode} ${u.unitName}`).join(', ') || '-'}`)
+  console.log(`Positions: ${positions.length}, placements to end: ${placements.length}`)
+  console.log(`Instansi: ${instansi.map((i) => `${i.instansiCode} ${i.instansiName}`).join(', ') || '-'}`)
+  if (!APPLY) { console.log('\nNothing written. Run again with --cleanup --apply.'); process.exit() }
+
+  for (const a of placements) {
+    try { await dir('POST', `/assignments/${a.id}/end`, { endDate: today }) } catch (err) { errors.push(`placement ${a.id}: ${err.message}`) }
+  }
+  // Children block their parents (409), so repeat until a pass changes nothing.
+  const offAll = async (label, items, path) => {
+    let left = items
+    while (left.length) {
+      const failed = []
+      for (const x of left) {
+        try { await dir('DELETE', path(x)) } catch (err) { if (err.status === 409) failed.push(x); else errors.push(`${label} ${x.id}: ${err.message}`) }
+      }
+      if (failed.length === left.length) { for (const x of failed) errors.push(`${label} ${x.unitCode ?? x.positionCode ?? x.instansiCode}: still in use`); break }
+      left = failed
+    }
+    console.log(`  ${label}: ${items.length - left.length} of ${items.length} switched off`)
+  }
+  await offAll('positions', positions, (p) => `/positions/${p.id}`)
+  await offAll('units', units, (u) => `/units/${u.id}`)
+  await offAll('instansi', [...instansi].sort((a, b) => b.level - a.level), (i) => `/instansi/${i.id}`)
+  // A small incremental sync carries the switched-off units and positions to IAM; LMS follows in its hourly sync.
+  for (let attempt = 1; attempt <= 20; attempt++) {
+    try { console.log('IAM sync:', JSON.stringify(await lms('POST', '/api/iam/v1/sync/directory'))); break } catch (err) {
+      if (err.status !== 409 || attempt === 20) { errors.push(`IAM sync: ${err.message.slice(0, 120)}`); break }
+      await new Promise((r) => setTimeout(r, 3000))
+    }
+  }
+  if (errors.length) { console.log(`\n${errors.length} errors:`); for (const e of errors) console.log(' ', e.slice(0, 200)); process.exitCode = 1 } else console.log('\nDone.')
+  process.exit()
+}
+
 console.log(`${APPLY ? 'APPLY' : 'DRY RUN (nothing is written; add --apply)'}: Directory ${DIR}, LMS ${BASE}`)
 
 // 1. Units
